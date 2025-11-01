@@ -1,1 +1,39 @@
-<p>favourite-movies works!</p>
+<div class="favourites-container p-4">
+  <div class="header mb-4 flex justify-between items-center">
+    <h1 class="text-3xl font-bold text-white">My Favourite Movies</h1>
+    <button
+      *ngIf="favouriteMovies.length > 0"
+      pButton
+      label="Clear All"
+      icon="pi pi-trash"
+      (click)="clearAllFavourites()"
+      class="p-button-danger"
+    ></button>
+  </div>
+
+  <div
+    *ngIf="favouriteMovies.length === 0"
+    class="text-center text-gray-400 py-12"
+  >
+    <i class="pi pi-heart text-6xl mb-4 opacity-50"></i>
+    <p class="text-2xl mb-2">No favourite movies yet</p>
+    <p class="text-lg">
+      Start adding movies to your favourites from the trending page!
+    </p>
+  </div>
+
+  <div *ngIf="favouriteMovies.length > 0">
+    <div
+      class="movies-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <app-movie-card
+        *ngFor="let movie of favouriteMovies"
+        [movie]="movie"
+        [isFavourite]="isFavourite(movie.id)"
+        [userRating]="getUserRating(movie.id)"
+        (toggleFavourite)="onToggleFavourite($event)"
+        (rateMovie)="onRateMovie($event)"
+      ></app-movie-card>
+    </div>
+  </div>
+</div>

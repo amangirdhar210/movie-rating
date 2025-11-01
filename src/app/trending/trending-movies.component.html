@@ -1,1 +1,71 @@
-<p>trending-movies works!</p>
+<div class="trending-container p-4">
+  <div class="header mb-4">
+    <h1 class="text-3xl font-bold text-white mb-4">
+      {{ isSearchMode ? "Search Results" : "Trending Movies" }}
+    </h1>
+
+    <div class="search-bar flex gap-2 mb-4">
+      <span class="p-input-icon-left flex-1">
+        <i class="pi pi-search"></i>
+        <input
+          type="text"
+          pInputText
+          [(ngModel)]="searchQuery"
+          (keyup.enter)="onSearch()"
+          placeholder="Search for movies..."
+          class="w-full"
+        />
+      </span>
+      <button
+        pButton
+        label="Search"
+        icon="pi pi-search"
+        (click)="onSearch()"
+        [disabled]="loading"
+      ></button>
+      <button
+        *ngIf="isSearchMode"
+        pButton
+        label="Clear"
+        icon="pi pi-times"
+        (click)="loadTrendingMovies(1)"
+        class="p-button-secondary"
+      ></button>
+    </div>
+  </div>
+
+  <div *ngIf="loading" class="flex justify-center items-center h-64">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+
+  <div
+    *ngIf="!loading && movies.length === 0"
+    class="text-center text-gray-400 py-8"
+  >
+    <p class="text-xl">No movies found</p>
+  </div>
+
+  <div *ngIf="!loading && movies.length > 0">
+    <div
+      class="movies-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+    >
+      <app-movie-card
+        *ngFor="let movie of movies"
+        [movie]="movie"
+        [isFavourite]="isFavourite(movie.id)"
+        [userRating]="getUserRating(movie.id)"
+        (toggleFavourite)="onToggleFavourite($event)"
+        (rateMovie)="onRateMovie($event)"
+      ></app-movie-card>
+    </div>
+
+    <div class="pagination-container mt-6">
+      <app-paginator
+        [totalRecords]="totalResults"
+        [rows]="20"
+        [currentPage]="currentPage"
+        (pageChange)="onPageChange($event)"
+      ></app-paginator>
+    </div>
+  </div>
+</div>

@@ -1,6 +1,8 @@
 <div class="card">
-  <p-menubar class="menu">
-    <i class="pi pi-video" style="font-size: 2rem"> CineMate </i>
+  <p-menubar [model]="items" class="menu">
+    <ng-template pTemplate="start">
+      <i class="pi pi-video" style="font-size: 2rem; margin-right: 0.5rem"></i>
+      <span style="font-size: 1.5rem; font-weight: bold">CineMate</span>
+    </ng-template>
   </p-menubar>
-  <div class="flex align-items-center"></div>
 </div>

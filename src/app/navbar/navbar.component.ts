@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { Router } from '@angular/router';
 import { MenuItem } from 'primeng/api';
 import { BadgeModule } from 'primeng/badge';
 import { AvatarModule } from 'primeng/avatar';
@@ -23,4 +24,23 @@ import { DialogModule } from 'primeng/dialog';
   templateUrl: './navbar.component.html',
   styleUrl: './navbar.component.scss',
 })
-export class NavbarComponent {}
+export class NavbarComponent implements OnInit {
+  items: MenuItem[] = [];
+
+  constructor(private router: Router) {}
+
+  ngOnInit() {
+    this.items = [
+      {
+        label: 'Trending',
+        icon: 'pi pi-fire',
+        command: () => this.router.navigate(['/trending']),
+      },
+      {
+        label: 'Favourites',
+        icon: 'pi pi-heart',
+        command: () => this.router.navigate(['/favourites']),
+      },
+    ];
+  }
+}

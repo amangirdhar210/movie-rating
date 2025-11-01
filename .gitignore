@@ -41,4 +41,5 @@ testem.log
 .DS_Store
 Thumbs.db
 
-environment.ts
+# Environment files with API keys
+src/app/shared/environments/environment.ts

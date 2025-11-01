@@ -1,1 +1,8 @@
-<p>paginator works!</p>
+<p-paginator
+  [first]="(currentPage - 1) * rows"
+  [rows]="rows"
+  [totalRecords]="totalRecords"
+  (onPageChange)="onPageChange($event)"
+  [showCurrentPageReport]="true"
+  currentPageReportTemplate="Showing {first} to {last} of {totalRecords} movies"
+></p-paginator>

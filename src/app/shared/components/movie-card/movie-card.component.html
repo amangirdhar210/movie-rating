@@ -1,1 +1,71 @@
-<p>movie-card works!</p>
+<p-card
+  class="movie-card group relative rounded-xl overflow-hidden shadow-lg transform transition-transform duration-300 hover:scale-105 cursor-pointer bg-zinc-900"
+  [style]="{ width: '15rem', height: '22rem', margin: '0.5rem' }"
+>
+  <img
+    [src]="poster"
+    [alt]="movie.title"
+    loading="lazy"
+    class="w-full h-full object-cover transition-all duration-500 group-hover:opacity-30"
+  />
+
+  <div
+    class="absolute bottom-0 left-0 right-0 px-3 py-2 bg-gradient-to-t from-black/90 via-black/60 to-transparent"
+  >
+    <h3 class="text-white text-base font-semibold truncate">
+      {{ movie.title }}
+    </h3>
+    <p class="text-gray-300 text-xs">
+      ⭐ {{ movie.vote_average | number : "1.1-1" }} • {{ releaseYear }} •
+      {{ movie.original_language | uppercase }}
+    </p>
+  </div>
+
+  <div
+    class="absolute inset-0 bg-black/95 opacity-0 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-between p-4"
+  >
+    <div>
+      <h3 class="text-white text-lg font-bold mb-2 line-clamp-2">
+        {{ movie.title }}
+      </h3>
+      <p class="text-gray-300 text-sm line-clamp-5">
+        {{ movie.overview || "No overview available." }}
+      </p>
+    </div>
+
+    <div>
+      <div class="flex justify-between items-center text-gray-400 text-xs mb-3">
+        <span>🔥 {{ movie.popularity | number : "1.0-0" }}</span>
+        <span>🗳️ {{ movie.vote_count }}</span>
+      </div>
+
+      <div class="flex justify-between items-center">
+        <button
+          pButton
+          pTooltip="{{
+            isFavourite ? 'Remove from favourites' : 'Add to favourites'
+          }}"
+          tooltipPosition="top"
+          class="p-button-rounded p-button-text text-red-500 hover:text-red-600"
+          (click)="onToggleFavourite($event)"
+        >
+          <i
+            class="pi"
+            [ngClass]="{
+              'pi-heart-fill text-red-500': isFavourite,
+              'pi-heart': !isFavourite
+            }"
+          ></i>
+        </button>
+
+        <p-rating
+          [(ngModel)]="userRating"
+          stars="5"
+          (onRate)="onRateChange()"
+          iconOnClass="pi pi-star-fill text-yellow-400"
+          iconOffClass="pi pi-star text-gray-500"
+        ></p-rating>
+      </div>
+    </div>
+  </div>
+</p-card>
