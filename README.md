@@ -1,59 +1,114 @@
-# MovieRating
+# CineMate - Movie Rating Application
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 19.2.18.
+A modern, responsive movie browsing and rating application built with Angular 19, PrimeNG, and Tailwind CSS. Browse trending movies, search for your favorites, and maintain your personal collection with ratings.
 
-## Development server
+## Features
 
-To start a local development server, run:
+- **Browse Trending Movies**: View the latest trending movies with detailed information
+- **Advanced Search**: Search for any movie with real-time results
+- **Movie Details Modal**: Click any movie to see comprehensive details including overview, ratings, and stats
+- **Personal Ratings**: Rate movies on a 5-star scale
+- **Favorites Management**: Add movies to your favorites for quick access
+- **Fully Responsive**: Optimized for all devices from mobile to desktop
+- **Modern UI**: Beautiful gradient design with smooth animations
+
+## Tech Stack
+
+- Angular 19.2
+- PrimeNG 19.1 (UI Components)
+- Tailwind CSS 4.1 (Styling)
+- TMDB API (Movie Data)
+- RxJS (State Management)
+- TypeScript 5.7
+
+## Installation
+
+1. Clone the repository
+2. Install dependencies:
+
+```bash
+npm install
+```
+
+3. Set up your TMDB API credentials:
+   - Copy `src/app/shared/environments/sampleEnvironment.ts` to `src/app/shared/environments/environment.ts`
+   - Add your TMDB API key and access token
+
+## Development
+
+Start the development server:
 
 ```bash
 ng serve
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
-```bash
-ng generate component component-name
-```
-
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
-```bash
-ng generate --help
-```
+Navigate to `http://localhost:4200/`
 
 ## Building
 
-To build the project run:
+Build for production:
 
 ```bash
 ng build
 ```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
+## Project Structure
 
-## Running unit tests
-
-To execute unit tests with the [Karma](https://karma-runner.github.io) test runner, use the following command:
-
-```bash
-ng test
+```
+src/app/
+├── favourites/              # Favourites page component
+├── trending/                # Trending movies page component
+├── navbar/                  # Navigation component
+├── interceptors/            # HTTP interceptors
+└── shared/
+    ├── components/
+    │   ├── movie-card/      # Movie card component
+    │   ├── movie-detail-modal/  # Movie details modal
+    │   └── paginator/       # Pagination component
+    ├── services/
+    │   ├── movie.service.ts    # Movie API service
+    │   └── rating.service.ts   # Ratings & favorites service
+    ├── models/              # TypeScript interfaces
+    ├── constants/           # App constants
+    └── environments/        # Environment configs
 ```
 
-## Running end-to-end tests
+## Key Features Implementation
 
-For end-to-end (e2e) testing, run:
+### Responsive Design
 
-```bash
-ng e2e
-```
+- Mobile-first approach with breakpoints for all screen sizes
+- Adaptive grid layouts that adjust from 1-5 columns
+- Touch-friendly UI elements
+- Optimized images and lazy loading
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+### Movie Detail Modal
 
-## Additional Resources
+- Full movie information display
+- Interactive rating system
+- Add/remove from favorites
+- Responsive backdrop and poster images
+- Smooth animations and transitions
 
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+### Local Storage
+
+- Favorites persisted locally
+- User ratings saved across sessions
+- No backend required for personal data
+
+## API Integration
+
+The app uses TMDB (The Movie Database) API:
+
+- Trending movies endpoint
+- Search movies endpoint
+- Image CDN for posters and backdrops
+
+## Browser Support
+
+- Chrome (latest)
+- Firefox (latest)
+- Safari (latest)
+- Edge (latest)
+
+

@@ -5,6 +5,7 @@ import { MovieService } from '../shared/services/movie.service';
 import { RatingService } from '../shared/services/rating.service';
 import { Movie } from '../shared/models/movie.model';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
+import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
@@ -16,6 +17,7 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     CommonModule,
     FormsModule,
     MovieCardComponent,
+    MovieDetailModalComponent,
     PaginatorComponent,
     InputTextModule,
     ButtonModule,
@@ -31,17 +33,19 @@ export class TrendingMoviesComponent implements OnInit {
   totalResults = 0;
   searchQuery = '';
   isSearchMode = false;
+  selectedMovie: Movie | null = null;
+  showModal = false;
 
   constructor(
     private movieService: MovieService,
     private ratingService: RatingService
   ) {}
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.loadTrendingMovies();
   }
 
-  loadTrendingMovies(page: number = 1) {
+  loadTrendingMovies(page: number = 1): void {
     this.loading = true;
     this.currentPage = page;
     this.isSearchMode = false;
@@ -60,7 +64,7 @@ export class TrendingMoviesComponent implements OnInit {
     });
   }
 
-  searchMovies(page: number = 1) {
+  searchMovies(page: number = 1): void {
     if (!this.searchQuery.trim()) {
       this.loadTrendingMovies();
       return;
@@ -83,11 +87,11 @@ export class TrendingMoviesComponent implements OnInit {
     });
   }
 
-  onSearch() {
+  onSearch(): void {
     this.searchMovies(1);
   }
 
-  onPageChange(page: number) {
+  onPageChange(page: number): void {
     if (this.isSearchMode) {
       this.searchMovies(page);
     } else {
@@ -95,12 +99,17 @@ export class TrendingMoviesComponent implements OnInit {
     }
   }
 
-  onToggleFavourite(movie: Movie) {
+  onMovieClick(movie: Movie): void {
+    this.selectedMovie = movie;
+    this.showModal = true;
+  }
+
+  onToggleFavourite(movie: Movie): void {
     this.ratingService.toggleFavourite(movie);
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }) {
-    this.ratingService.setRating(event.movie.id, event.rating);
+  onRateMovie(event: { movie: Movie; rating: number }): void {
+    this.ratingService.setRating(event.movie.id, event.rating, event.movie);
   }
 
   isFavourite(movieId: number): boolean {

@@ -1,10 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { Movie } from '../models/movie.model';
 
 export interface TrendingMoviesResponse {
   page: number;
-  results: any[];
+  results: Movie[];
   total_pages: number;
   total_results: number;
 }

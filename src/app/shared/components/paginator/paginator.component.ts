@@ -13,9 +13,9 @@ export class PaginatorComponent {
   @Input() currentPage: number = 1;
   @Output() pageChange = new EventEmitter<number>();
 
-  onPageChange(event: PaginatorState) {
+  onPageChange(event: PaginatorState): void {
     if (event.page !== undefined) {
-      this.pageChange.emit(event.page + 1); 
+      this.pageChange.emit(event.page + 1);
     }
   }
 }

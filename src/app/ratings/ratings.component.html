@@ -1,0 +1,44 @@
+<div class="ratings-container">
+  <div class="header">
+    <h2 class="title">My Ratings</h2>
+    <button
+      *ngIf="ratedMovies.length > 0"
+      pButton
+      label="Clear All Ratings"
+      icon="pi pi-trash"
+      class="p-button-danger"
+      (click)="clearAllRatings()"
+    ></button>
+  </div>
+
+  <div *ngIf="ratedMovies.length === 0" class="empty-state">
+    <i class="pi pi-star empty-icon"></i>
+    <h3 class="empty-title">No Ratings Yet</h3>
+    <p class="empty-text">
+      Start rating movies to see them here. Your ratings help you track movies
+      you've watched!
+    </p>
+  </div>
+
+  <div *ngIf="ratedMovies.length > 0" class="movies-grid">
+    <div *ngFor="let movie of ratedMovies" class="movie-wrapper">
+      <app-movie-card
+        [movie]="movie"
+        (movieClick)="onMovieClick($event)"
+      ></app-movie-card>
+      <div class="rating-badge">
+        <i class="pi pi-star-fill"></i>
+        <span>{{ movie.userRating }}/5</span>
+      </div>
+    </div>
+  </div>
+
+  <app-movie-detail-modal
+    [(visible)]="showModal"
+    [movie]="selectedMovie"
+    [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
+    [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
+    (toggleFavourite)="onToggleFavourite($event)"
+    (rateMovie)="onRateMovie($event)"
+  ></app-movie-detail-modal>
+</div>

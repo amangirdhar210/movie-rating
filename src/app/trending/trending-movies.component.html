@@ -1,27 +1,28 @@
-<div class="trending-container p-4">
-  <div class="header mb-4">
-    <h1 class="text-3xl font-bold text-white mb-4">
+<div class="trending-container">
+  <div class="header-section">
+    <h1 class="page-title">
       {{ isSearchMode ? "Search Results" : "Trending Movies" }}
     </h1>
 
-    <div class="search-bar flex gap-2 mb-4">
-      <span class="p-input-icon-left flex-1">
-        <i class="pi pi-search"></i>
+    <div class="search-container">
+      <div class="search-input-wrapper">
+        <i class="pi pi-search search-icon"></i>
         <input
           type="text"
           pInputText
           [(ngModel)]="searchQuery"
           (keyup.enter)="onSearch()"
           placeholder="Search for movies..."
-          class="w-full"
+          class="search-input"
         />
-      </span>
+      </div>
       <button
         pButton
         label="Search"
         icon="pi pi-search"
         (click)="onSearch()"
         [disabled]="loading"
+        class="search-button"
       ></button>
       <button
         *ngIf="isSearchMode"
@@ -29,37 +30,32 @@
         label="Clear"
         icon="pi pi-times"
         (click)="loadTrendingMovies(1)"
-        class="p-button-secondary"
+        class="p-button-secondary clear-button"
       ></button>
     </div>
   </div>
 
-  <div *ngIf="loading" class="flex justify-center items-center h-64">
+  <div *ngIf="loading" class="loading-container">
     <p-progressSpinner></p-progressSpinner>
   </div>
 
-  <div
-    *ngIf="!loading && movies.length === 0"
-    class="text-center text-gray-400 py-8"
-  >
-    <p class="text-xl">No movies found</p>
+  <div *ngIf="!loading && movies.length === 0" class="empty-state">
+    <i class="pi pi-film empty-icon"></i>
+    <p class="empty-text">No movies found</p>
   </div>
 
-  <div *ngIf="!loading && movies.length > 0">
-    <div
-      class="movies-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-    >
+  <div *ngIf="!loading && movies.length > 0" class="content-section">
+    <div class="movies-grid">
       <app-movie-card
         *ngFor="let movie of movies"
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
-        (toggleFavourite)="onToggleFavourite($event)"
-        (rateMovie)="onRateMovie($event)"
+        (movieClick)="onMovieClick($event)"
       ></app-movie-card>
     </div>
 
-    <div class="pagination-container mt-6">
+    <div class="pagination-section">
       <app-paginator
         [totalRecords]="totalResults"
         [rows]="20"
@@ -69,3 +65,12 @@
     </div>
   </div>
 </div>
+
+<app-movie-detail-modal
+  [(visible)]="showModal"
+  [movie]="selectedMovie"
+  [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
+  [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
+  (toggleFavourite)="onToggleFavourite($event)"
+  (rateMovie)="onRateMovie($event)"
+></app-movie-detail-modal>

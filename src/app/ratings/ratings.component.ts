@@ -7,29 +7,29 @@ import { MovieDetailModalComponent } from '../shared/components/movie-detail-mod
 import { ButtonModule } from 'primeng/button';
 
 @Component({
-  selector: 'app-favourite-movies',
+  selector: 'app-ratings',
   imports: [
     CommonModule,
     MovieCardComponent,
     MovieDetailModalComponent,
     ButtonModule,
   ],
-  templateUrl: './favourite-movies.component.html',
-  styleUrl: './favourite-movies.component.scss',
+  templateUrl: './ratings.component.html',
+  styleUrl: './ratings.component.scss',
 })
-export class FavouriteMoviesComponent implements OnInit {
-  favouriteMovies: Movie[] = [];
+export class RatingsComponent implements OnInit {
+  ratedMovies: Array<Movie & { userRating: number }> = [];
   selectedMovie: Movie | null = null;
   showModal = false;
 
   constructor(private ratingService: RatingService) {}
 
   ngOnInit(): void {
-    this.loadFavourites();
+    this.loadRatedMovies();
   }
 
-  loadFavourites(): void {
-    this.favouriteMovies = this.ratingService.getFavourites();
+  loadRatedMovies(): void {
+    this.ratedMovies = this.ratingService.getRatedMovies();
   }
 
   onMovieClick(movie: Movie): void {
@@ -39,11 +39,12 @@ export class FavouriteMoviesComponent implements OnInit {
 
   onToggleFavourite(movie: Movie): void {
     this.ratingService.toggleFavourite(movie);
-    this.loadFavourites();
+    this.loadRatedMovies();
   }
 
   onRateMovie(event: { movie: Movie; rating: number }): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
+    this.loadRatedMovies();
   }
 
   isFavourite(movieId: number): boolean {
@@ -54,10 +55,10 @@ export class FavouriteMoviesComponent implements OnInit {
     return this.ratingService.getRating(movieId);
   }
 
-  clearAllFavourites(): void {
-    this.favouriteMovies.forEach((movie) => {
-      this.ratingService.removeFromFavourites(movie.id);
+  clearAllRatings(): void {
+    this.ratedMovies.forEach((movie) => {
+      this.ratingService.removeRating(movie.id);
     });
-    this.loadFavourites();
+    this.loadRatedMovies();
   }
 }

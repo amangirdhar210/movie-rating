@@ -1,39 +1,42 @@
-<div class="favourites-container p-4">
-  <div class="header mb-4 flex justify-between items-center">
-    <h1 class="text-3xl font-bold text-white">My Favourite Movies</h1>
+<div class="favourites-container">
+  <div class="header-section">
+    <h1 class="page-title">My Favourite Movies</h1>
     <button
       *ngIf="favouriteMovies.length > 0"
       pButton
       label="Clear All"
       icon="pi pi-trash"
       (click)="clearAllFavourites()"
-      class="p-button-danger"
+      class="p-button-danger clear-all-button"
     ></button>
   </div>
 
-  <div
-    *ngIf="favouriteMovies.length === 0"
-    class="text-center text-gray-400 py-12"
-  >
-    <i class="pi pi-heart text-6xl mb-4 opacity-50"></i>
-    <p class="text-2xl mb-2">No favourite movies yet</p>
-    <p class="text-lg">
+  <div *ngIf="favouriteMovies.length === 0" class="empty-state">
+    <i class="pi pi-heart empty-icon"></i>
+    <p class="empty-title">No favourite movies yet</p>
+    <p class="empty-subtitle">
       Start adding movies to your favourites from the trending page!
     </p>
   </div>
 
-  <div *ngIf="favouriteMovies.length > 0">
-    <div
-      class="movies-grid grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
-    >
+  <div *ngIf="favouriteMovies.length > 0" class="content-section">
+    <div class="movies-grid">
       <app-movie-card
         *ngFor="let movie of favouriteMovies"
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
-        (toggleFavourite)="onToggleFavourite($event)"
-        (rateMovie)="onRateMovie($event)"
+        (movieClick)="onMovieClick($event)"
       ></app-movie-card>
     </div>
   </div>
 </div>
+
+<app-movie-detail-modal
+  [(visible)]="showModal"
+  [movie]="selectedMovie"
+  [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
+  [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
+  (toggleFavourite)="onToggleFavourite($event)"
+  (rateMovie)="onRateMovie($event)"
+></app-movie-detail-modal>

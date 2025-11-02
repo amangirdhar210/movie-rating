@@ -1,0 +1,114 @@
+<p-dialog
+  [(visible)]="visible"
+  [modal]="true"
+  [draggable]="false"
+  [resizable]="false"
+  [dismissableMask]="true"
+  [closable]="true"
+  [style]="{ width: '90vw', maxWidth: '900px' }"
+  styleClass="movie-detail-dialog"
+  (onHide)="onHide()"
+>
+  <ng-template pTemplate="content">
+    <div *ngIf="movie" class="movie-detail-content">
+      <div class="backdrop-container">
+        <img
+          [src]="backdropUrl"
+          [alt]="movie.title"
+          class="backdrop-image"
+          loading="lazy"
+        />
+        <div class="backdrop-overlay"></div>
+      </div>
+
+      <div class="content-wrapper">
+        <div class="poster-section">
+          <img
+            [src]="posterUrl"
+            [alt]="movie.title"
+            class="poster-image"
+            loading="lazy"
+          />
+        </div>
+
+        <div class="details-section">
+          <h1 class="movie-title">{{ movie.title }}</h1>
+
+          <div class="meta-info">
+            <span class="meta-item">
+              <i class="pi pi-calendar"></i>
+              {{ releaseYear }}
+            </span>
+            <span class="meta-item">
+              <i class="pi pi-star-fill"></i>
+              {{ movie.vote_average | number : "1.1-1" }}
+            </span>
+            <span class="meta-item">
+              <i class="pi pi-users"></i>
+              {{ movie.vote_count }} votes
+            </span>
+            <span class="meta-item">
+              <i class="pi pi-globe"></i>
+              {{ movie.original_language | uppercase }}
+            </span>
+          </div>
+
+          <div class="overview-section">
+            <h3 class="section-title">Overview</h3>
+            <p class="overview-text">
+              {{ movie.overview || "No overview available." }}
+            </p>
+          </div>
+
+          <div class="stats-section">
+            <div class="stat-item">
+              <span class="stat-label">Popularity</span>
+              <span class="stat-value">{{
+                movie.popularity | number : "1.0-0"
+              }}</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-label">Adult Content</span>
+              <span class="stat-value">{{ movie.adult ? "Yes" : "No" }}</span>
+            </div>
+          </div>
+
+          <div class="actions-section">
+            <div class="rating-container">
+              <div class="rating-header">
+                <label class="rating-label">Your Rating</label>
+                <button
+                  *ngIf="userRating > 0"
+                  type="button"
+                  class="clear-rating-btn"
+                  (click)="clearRating()"
+                  title="Clear rating"
+                >
+                  <i class="pi pi-times"></i>
+                </button>
+              </div>
+              <p-rating
+                [(ngModel)]="userRating"
+                [stars]="5"
+                (onRate)="onRateChange()"
+                iconOnClass="pi pi-star-fill"
+                iconOffClass="pi pi-star"
+              ></p-rating>
+            </div>
+
+            <button
+              pButton
+              [label]="
+                isFavourite ? 'Remove from Favourites' : 'Add to Favourites'
+              "
+              [icon]="isFavourite ? 'pi pi-heart-fill' : 'pi pi-heart'"
+              (click)="onToggleFavourite()"
+              [class]="isFavourite ? 'p-button-danger' : 'p-button-outlined'"
+              class="favourite-button"
+            ></button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </ng-template>
+</p-dialog>

@@ -1,8 +1,21 @@
-<div class="card">
-  <p-menubar [model]="items" class="menu">
-    <ng-template pTemplate="start">
-      <i class="pi pi-video" style="font-size: 2rem; margin-right: 0.5rem"></i>
-      <span style="font-size: 1.5rem; font-weight: bold">CineMate</span>
-    </ng-template>
-  </p-menubar>
-</div>
+<nav class="navbar">
+  <div class="navbar-brand">
+    <i class="pi pi-video"></i>
+    <span class="brand-name">CineMate</span>
+  </div>
+
+  <div class="navbar-menu">
+    <a routerLink="/trending" routerLinkActive="active" class="nav-item">
+      <i class="pi pi-fire"></i>
+      <span>Trending</span>
+    </a>
+    <a routerLink="/favourites" routerLinkActive="active" class="nav-item">
+      <i class="pi pi-heart"></i>
+      <span>Favourites</span>
+    </a>
+    <a routerLink="/ratings" routerLinkActive="active" class="nav-item">
+      <i class="pi pi-star"></i>
+      <span>My Ratings</span>
+    </a>
+  </div>
+</nav>
