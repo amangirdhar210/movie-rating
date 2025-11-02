@@ -10,13 +10,14 @@
   (onHide)="onHide()"
 >
   <ng-template pTemplate="content">
-    <div *ngIf="movie" class="movie-detail-content">
+    @if (movie) {
+    <div class="movie-detail-content">
       <div class="backdrop-container">
         <img
           [src]="backdropUrl"
           [alt]="movie.title"
           class="backdrop-image"
-          loading="lazy"
+          loading="eager"
         />
         <div class="backdrop-overlay"></div>
       </div>
@@ -27,7 +28,7 @@
             [src]="posterUrl"
             [alt]="movie.title"
             class="poster-image"
-            loading="lazy"
+            loading="eager"
           />
         </div>
 
@@ -45,7 +46,7 @@
             </span>
             <span class="meta-item">
               <i class="pi pi-users"></i>
-              {{ movie.vote_count }} votes
+              {{ movie.vote_count }} {{ TEXT.VOTES }}
             </span>
             <span class="meta-item">
               <i class="pi pi-globe"></i>
@@ -54,38 +55,41 @@
           </div>
 
           <div class="overview-section">
-            <h3 class="section-title">Overview</h3>
+            <h3 class="section-title">{{ TEXT.OVERVIEW }}</h3>
             <p class="overview-text">
-              {{ movie.overview || "No overview available." }}
+              {{ movie.overview || TEXT.NO_OVERVIEW }}
             </p>
           </div>
 
           <div class="stats-section">
             <div class="stat-item">
-              <span class="stat-label">Popularity</span>
+              <span class="stat-label">{{ TEXT.POPULARITY }}</span>
               <span class="stat-value">{{
                 movie.popularity | number : "1.0-0"
               }}</span>
             </div>
             <div class="stat-item">
-              <span class="stat-label">Adult Content</span>
-              <span class="stat-value">{{ movie.adult ? "Yes" : "No" }}</span>
+              <span class="stat-label">{{ TEXT.ADULT_CONTENT }}</span>
+              <span class="stat-value">{{
+                movie.adult ? TEXT.YES : TEXT.NO
+              }}</span>
             </div>
           </div>
 
           <div class="actions-section">
             <div class="rating-container">
               <div class="rating-header">
-                <label class="rating-label">Your Rating</label>
+                <label class="rating-label">{{ TEXT.YOUR_RATING }}</label>
+                @if (userRating > 0) {
                 <button
-                  *ngIf="userRating > 0"
                   type="button"
                   class="clear-rating-btn"
                   (click)="clearRating()"
-                  title="Clear rating"
+                  [title]="TEXT.CLEAR_RATING"
                 >
                   <i class="pi pi-times"></i>
                 </button>
+                }
               </div>
               <p-rating
                 [(ngModel)]="userRating"
@@ -99,7 +103,9 @@
             <button
               pButton
               [label]="
-                isFavourite ? 'Remove from Favourites' : 'Add to Favourites'
+                isFavourite
+                  ? TEXT.REMOVE_FROM_FAVOURITES
+                  : TEXT.ADD_TO_FAVOURITES
               "
               [icon]="isFavourite ? 'pi pi-heart-fill' : 'pi pi-heart'"
               (click)="onToggleFavourite()"
@@ -110,5 +116,6 @@
         </div>
       </div>
     </div>
+    }
   </ng-template>
 </p-dialog>

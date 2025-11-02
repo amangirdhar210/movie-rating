@@ -1,7 +1,7 @@
 <div class="trending-container">
   <div class="header-section">
     <h1 class="page-title">
-      {{ isSearchMode ? "Search Results" : "Trending Movies" }}
+      {{ isSearchMode ? TEXT.SEARCH_RESULTS : TEXT.TRENDING_MOVIES }}
     </h1>
 
     <div class="search-container">
@@ -12,47 +12,51 @@
           pInputText
           [(ngModel)]="searchQuery"
           (keyup.enter)="onSearch()"
-          placeholder="Search for movies..."
+          [placeholder]="TEXT.SEARCH_PLACEHOLDER"
           class="search-input"
         />
       </div>
       <button
         pButton
-        label="Search"
+        [label]="TEXT.SEARCH"
         icon="pi pi-search"
         (click)="onSearch()"
-        [disabled]="loading"
+        [disabled]="loading()"
         class="search-button"
       ></button>
+      @if (isSearchMode) {
       <button
-        *ngIf="isSearchMode"
         pButton
-        label="Clear"
+        [label]="TEXT.CLEAR"
         icon="pi pi-times"
         (click)="loadTrendingMovies(1)"
         class="p-button-secondary clear-button"
       ></button>
+      }
     </div>
   </div>
 
-  <div *ngIf="loading" class="loading-container">
+  @if (loading()) {
+  <div class="loading-container">
     <p-progressSpinner></p-progressSpinner>
   </div>
-
-  <div *ngIf="!loading && movies.length === 0" class="empty-state">
+  } @if (!loading() && movies.length === 0) {
+  <div class="empty-state">
     <i class="pi pi-film empty-icon"></i>
-    <p class="empty-text">No movies found</p>
+    <p class="empty-text">{{ TEXT.NO_MOVIES_FOUND }}</p>
   </div>
-
-  <div *ngIf="!loading && movies.length > 0" class="content-section">
+  } @if (!loading() && movies.length > 0) {
+  <div class="content-section">
     <div class="movies-grid">
+      @for (movie of movies; track movie.id; let i = $index) {
       <app-movie-card
-        *ngFor="let movie of movies"
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
+        [priority]="i < 6"
         (movieClick)="onMovieClick($event)"
       ></app-movie-card>
+      }
     </div>
 
     <div class="pagination-section">
@@ -64,6 +68,7 @@
       ></app-paginator>
     </div>
   </div>
+  }
 </div>
 
 <app-movie-detail-modal

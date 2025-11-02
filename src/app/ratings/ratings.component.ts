@@ -1,26 +1,24 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { RatingService } from '../shared/services/rating.service';
 import { Movie } from '../shared/models/movie.model';
+import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { ButtonModule } from 'primeng/button';
 
+type RatedMovie = Movie & { userRating: number };
+
 @Component({
   selector: 'app-ratings',
-  imports: [
-    CommonModule,
-    MovieCardComponent,
-    MovieDetailModalComponent,
-    ButtonModule,
-  ],
+  imports: [MovieCardComponent, MovieDetailModalComponent, ButtonModule],
   templateUrl: './ratings.component.html',
   styleUrl: './ratings.component.scss',
 })
 export class RatingsComponent implements OnInit {
-  ratedMovies: Array<Movie & { userRating: number }> = [];
+  ratedMovies: WritableSignal<RatedMovie[]> = signal<RatedMovie[]>([]);
   selectedMovie: Movie | null = null;
   showModal = false;
+  readonly TEXT = APP_TEXT;
 
   constructor(private ratingService: RatingService) {}
 
@@ -29,7 +27,7 @@ export class RatingsComponent implements OnInit {
   }
 
   loadRatedMovies(): void {
-    this.ratedMovies = this.ratingService.getRatedMovies();
+    this.ratedMovies.set(this.ratingService.getRatedMovies());
   }
 
   onMovieClick(movie: Movie): void {
@@ -56,7 +54,7 @@ export class RatingsComponent implements OnInit {
   }
 
   clearAllRatings(): void {
-    this.ratedMovies.forEach((movie) => {
+    this.ratedMovies().forEach((movie: RatedMovie) => {
       this.ratingService.removeRating(movie.id);
     });
     this.loadRatedMovies();

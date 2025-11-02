@@ -1,20 +1,20 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { MovieService } from '../shared/services/movie.service';
 import { RatingService } from '../shared/services/rating.service';
 import { Movie } from '../shared/models/movie.model';
+import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-trending-movies',
   imports: [
-    CommonModule,
     FormsModule,
     MovieCardComponent,
     MovieDetailModalComponent,
@@ -28,17 +28,19 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
 })
 export class TrendingMoviesComponent implements OnInit {
   movies: Movie[] = [];
-  loading = false;
+  loading: WritableSignal<boolean> = signal<boolean>(false);
   currentPage = 1;
   totalResults = 0;
   searchQuery = '';
   isSearchMode = false;
   selectedMovie: Movie | null = null;
   showModal = false;
+  readonly TEXT = APP_TEXT;
 
   constructor(
     private movieService: MovieService,
-    private ratingService: RatingService
+    private ratingService: RatingService,
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -46,7 +48,7 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   loadTrendingMovies(page: number = 1): void {
-    this.loading = true;
+    this.loading.set(true);
     this.currentPage = page;
     this.isSearchMode = false;
     this.searchQuery = '';
@@ -55,11 +57,15 @@ export class TrendingMoviesComponent implements OnInit {
       next: (response) => {
         this.movies = response.results;
         this.totalResults = response.total_results;
-        this.loading = false;
+        this.loading.set(false);
       },
-      error: (error) => {
-        console.error('Error loading trending movies:', error);
-        this.loading = false;
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.TEXT.ERROR,
+          detail: this.TEXT.ERROR_LOADING_TRENDING,
+        });
+        this.loading.set(false);
       },
     });
   }
@@ -70,7 +76,7 @@ export class TrendingMoviesComponent implements OnInit {
       return;
     }
 
-    this.loading = true;
+    this.loading.set(true);
     this.currentPage = page;
     this.isSearchMode = true;
 
@@ -78,11 +84,15 @@ export class TrendingMoviesComponent implements OnInit {
       next: (response) => {
         this.movies = response.results;
         this.totalResults = response.total_results;
-        this.loading = false;
+        this.loading.set(false);
       },
-      error: (error) => {
-        console.error('Error searching movies:', error);
-        this.loading = false;
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.TEXT.ERROR,
+          detail: this.TEXT.ERROR_SEARCHING_MOVIES,
+        });
+        this.loading.set(false);
       },
     });
   }

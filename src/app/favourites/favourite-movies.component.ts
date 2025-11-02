@@ -1,26 +1,22 @@
-import { Component, OnInit } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { RatingService } from '../shared/services/rating.service';
 import { Movie } from '../shared/models/movie.model';
+import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-favourite-movies',
-  imports: [
-    CommonModule,
-    MovieCardComponent,
-    MovieDetailModalComponent,
-    ButtonModule,
-  ],
+  imports: [MovieCardComponent, MovieDetailModalComponent, ButtonModule],
   templateUrl: './favourite-movies.component.html',
   styleUrl: './favourite-movies.component.scss',
 })
 export class FavouriteMoviesComponent implements OnInit {
-  favouriteMovies: Movie[] = [];
+  favouriteMovies: WritableSignal<Movie[]> = signal<Movie[]>([]);
   selectedMovie: Movie | null = null;
   showModal = false;
+  readonly TEXT = APP_TEXT;
 
   constructor(private ratingService: RatingService) {}
 
@@ -29,7 +25,7 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   loadFavourites(): void {
-    this.favouriteMovies = this.ratingService.getFavourites();
+    this.favouriteMovies.set(this.ratingService.getFavourites());
   }
 
   onMovieClick(movie: Movie): void {
@@ -55,7 +51,7 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   clearAllFavourites(): void {
-    this.favouriteMovies.forEach((movie) => {
+    this.favouriteMovies().forEach((movie: Movie) => {
       this.ratingService.removeFromFavourites(movie.id);
     });
     this.loadFavourites();

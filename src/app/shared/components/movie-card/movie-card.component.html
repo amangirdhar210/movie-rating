@@ -1,11 +1,16 @@
 <div class="movie-card" (click)="onCardClick()">
   <div class="card-image-container">
-    <img [src]="poster" [alt]="movie.title" loading="lazy" class="card-image" />
+    <img
+      [src]="poster"
+      [alt]="movie.title"
+      [attr.loading]="priority ? 'eager' : 'lazy'"
+      class="card-image"
+    />
     <div class="card-overlay">
       <div class="overlay-content">
         <h3 class="overlay-title">{{ movie.title }}</h3>
         <p class="overlay-description">
-          {{ movie.overview || "No overview available." }}
+          {{ movie.overview || TEXT.NO_OVERVIEW }}
         </p>
         <div class="overlay-stats">
           <span class="stat-item">
@@ -34,12 +39,15 @@
   </div>
 
   <div class="card-badges">
-    <span *ngIf="isFavourite" class="badge favourite-badge">
+    @if (isFavourite) {
+    <span class="badge favourite-badge">
       <i class="pi pi-heart-fill"></i>
     </span>
-    <span *ngIf="userRating > 0" class="badge rating-badge">
+    } @if (userRating > 0) {
+    <span class="badge rating-badge">
       <i class="pi pi-star-fill"></i>
       {{ userRating }}
     </span>
+    }
   </div>
 </div>

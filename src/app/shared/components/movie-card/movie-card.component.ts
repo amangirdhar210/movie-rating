@@ -1,12 +1,12 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe, UpperCasePipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
 import { Movie } from '../../models/movie.model';
-import { IMAGE_BASE_URL } from '../../constants';
+import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
 
 @Component({
   selector: 'app-movie-card',
-  imports: [CommonModule, CardModule],
+  imports: [CardModule, DecimalPipe, UpperCasePipe],
   templateUrl: './movie-card.component.html',
   styleUrl: './movie-card.component.scss',
 })
@@ -14,14 +14,16 @@ export class MovieCardComponent {
   @Input() movie!: Movie;
   @Input() isFavourite = false;
   @Input() userRating: number = 0;
+  @Input() priority = false;
   @Output() movieClick = new EventEmitter<Movie>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
+  readonly TEXT = APP_TEXT;
 
   get poster(): string {
     return this.movie.poster_path
       ? `${this.imgBaseUrl}${this.movie.poster_path}`
-      : '/placeholder-poster.jpg';
+      : DEFAULT_POSTER_PATH;
   }
 
   get releaseYear(): string {

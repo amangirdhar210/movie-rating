@@ -1,22 +1,23 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { DecimalPipe, UpperCasePipe } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
 import { Movie } from '../../models/movie.model';
-import { IMAGE_BASE_URL } from '../../constants';
+import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
 
 @Component({
   selector: 'app-movie-detail-modal',
   imports: [
-    CommonModule,
     DialogModule,
     ButtonModule,
     RatingModule,
     FormsModule,
     TagModule,
+    DecimalPipe,
+    UpperCasePipe,
   ],
   templateUrl: './movie-detail-modal.component.html',
   styleUrl: './movie-detail-modal.component.scss',
@@ -31,6 +32,7 @@ export class MovieDetailModalComponent {
   @Output() rateMovie = new EventEmitter<{ movie: Movie; rating: number }>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
+  readonly TEXT = APP_TEXT;
 
   get backdropUrl(): string {
     if (this.movie?.backdrop_path) {
@@ -39,13 +41,13 @@ export class MovieDetailModalComponent {
     if (this.movie?.poster_path) {
       return `${this.imgBaseUrl}${this.movie.poster_path}`;
     }
-    return '/placeholder-poster.jpg';
+    return DEFAULT_POSTER_PATH;
   }
 
   get posterUrl(): string {
     return this.movie?.poster_path
       ? `${this.imgBaseUrl}${this.movie.poster_path}`
-      : '/placeholder-poster.jpg';
+      : DEFAULT_POSTER_PATH;
   }
 
   get releaseYear(): string {

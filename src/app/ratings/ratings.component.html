@@ -1,27 +1,29 @@
 <div class="ratings-container">
   <div class="header">
-    <h2 class="title">My Ratings</h2>
+    <h2 class="title">{{ TEXT.MY_RATINGS }}</h2>
+    @if (ratedMovies().length > 0) {
     <button
-      *ngIf="ratedMovies.length > 0"
       pButton
-      label="Clear All Ratings"
+      [label]="TEXT.CLEAR_ALL_RATINGS"
       icon="pi pi-trash"
       class="p-button-danger"
       (click)="clearAllRatings()"
     ></button>
+    }
   </div>
 
-  <div *ngIf="ratedMovies.length === 0" class="empty-state">
+  @if (ratedMovies().length === 0) {
+  <div class="empty-state">
     <i class="pi pi-star empty-icon"></i>
-    <h3 class="empty-title">No Ratings Yet</h3>
+    <h3 class="empty-title">{{ TEXT.NO_RATINGS_YET }}</h3>
     <p class="empty-text">
-      Start rating movies to see them here. Your ratings help you track movies
-      you've watched!
+      {{ TEXT.NO_RATINGS_SUBTITLE }}
     </p>
   </div>
-
-  <div *ngIf="ratedMovies.length > 0" class="movies-grid">
-    <div *ngFor="let movie of ratedMovies" class="movie-wrapper">
+  } @if (ratedMovies().length > 0) {
+  <div class="movies-grid">
+    @for (movie of ratedMovies(); track movie.id) {
+    <div class="movie-wrapper">
       <app-movie-card
         [movie]="movie"
         (movieClick)="onMovieClick($event)"
@@ -31,7 +33,9 @@
         <span>{{ movie.userRating }}/5</span>
       </div>
     </div>
+    }
   </div>
+  }
 
   <app-movie-detail-modal
     [(visible)]="showModal"

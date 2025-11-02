@@ -1,35 +1,39 @@
 <div class="favourites-container">
   <div class="header-section">
-    <h1 class="page-title">My Favourite Movies</h1>
+    <h1 class="page-title">{{ TEXT.MY_FAVOURITE_MOVIES }}</h1>
+    @if (favouriteMovies().length > 0) {
     <button
-      *ngIf="favouriteMovies.length > 0"
       pButton
-      label="Clear All"
+      [label]="TEXT.CLEAR_ALL"
       icon="pi pi-trash"
       (click)="clearAllFavourites()"
       class="p-button-danger clear-all-button"
     ></button>
+    }
   </div>
 
-  <div *ngIf="favouriteMovies.length === 0" class="empty-state">
+  @if (favouriteMovies().length === 0) {
+  <div class="empty-state">
     <i class="pi pi-heart empty-icon"></i>
-    <p class="empty-title">No favourite movies yet</p>
+    <p class="empty-title">{{ TEXT.NO_FAVOURITE_MOVIES }}</p>
     <p class="empty-subtitle">
-      Start adding movies to your favourites from the trending page!
+      {{ TEXT.NO_FAVOURITES_SUBTITLE }}
     </p>
   </div>
-
-  <div *ngIf="favouriteMovies.length > 0" class="content-section">
+  } @if (favouriteMovies().length > 0) {
+  <div class="content-section">
     <div class="movies-grid">
+      @for (movie of favouriteMovies(); track movie.id) {
       <app-movie-card
-        *ngFor="let movie of favouriteMovies"
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
         (movieClick)="onMovieClick($event)"
       ></app-movie-card>
+      }
     </div>
   </div>
+  }
 </div>
 
 <app-movie-detail-modal
