@@ -10,6 +10,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
+import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
 
 @Component({
@@ -22,6 +23,7 @@ import { MessageService } from 'primeng/api';
     InputTextModule,
     ButtonModule,
     ProgressSpinnerModule,
+    TooltipModule,
   ],
   templateUrl: './trending-movies.component.html',
   styleUrl: './trending-movies.component.scss',
@@ -128,5 +130,20 @@ export class TrendingMoviesComponent implements OnInit {
 
   getUserRating(movieId: number): number {
     return this.ratingService.getRating(movieId);
+  }
+
+  clearCacheAndReload(): void {
+    this.movieService.clearCache();
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Cache Cleared',
+      detail: 'Movie cache has been cleared successfully',
+    });
+
+    if (this.isSearchMode) {
+      this.searchMovies(this.currentPage);
+    } else {
+      this.loadTrendingMovies(this.currentPage);
+    }
   }
 }

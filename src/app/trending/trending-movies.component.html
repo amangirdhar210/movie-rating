@@ -1,8 +1,19 @@
 <div class="trending-container">
   <div class="header-section">
-    <h1 class="page-title">
-      {{ isSearchMode ? TEXT.SEARCH_RESULTS : TEXT.TRENDING_MOVIES }}
-    </h1>
+    <div class="header-top">
+      <h1 class="page-title">
+        {{ isSearchMode ? TEXT.SEARCH_RESULTS : TEXT.TRENDING_MOVIES }}
+      </h1>
+      <button
+        pButton
+        icon="pi pi-refresh"
+        (click)="clearCacheAndReload()"
+        [disabled]="loading()"
+        class="p-button-text p-button-sm cache-button"
+        pTooltip="Clear cache and refresh"
+        tooltipPosition="bottom"
+      ></button>
+    </div>
 
     <div class="search-container">
       <div class="search-input-wrapper">
