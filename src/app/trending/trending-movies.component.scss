@@ -16,15 +16,34 @@
   }
 }
 
+.header-top {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.2rem;
+
+  @media (max-width: 768px) {
+    margin-bottom: 1rem;
+  }
+}
+
 .page-title {
   font-size: 2rem;
   font-weight: 600;
   color: #ffffff;
-  margin: 0 0 1.2rem 0;
+  margin: 0;
 
   @media (max-width: 768px) {
     font-size: 1.5rem;
-    margin-bottom: 1rem;
+  }
+}
+
+.cache-button {
+  opacity: 0.6;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 1;
   }
 }
 
