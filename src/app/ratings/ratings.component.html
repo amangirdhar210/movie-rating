@@ -23,16 +23,12 @@
   } @if (ratedMovies().length > 0) {
   <div class="movies-grid">
     @for (movie of ratedMovies(); track movie.id) {
-    <div class="movie-wrapper">
-      <app-movie-card
-        [movie]="movie"
-        (movieClick)="onMovieClick($event)"
-      ></app-movie-card>
-      <div class="rating-badge">
-        <i class="pi pi-star-fill"></i>
-        <span>{{ movie.userRating }}/5</span>
-      </div>
-    </div>
+    <app-movie-card
+      [movie]="movie"
+      [isFavourite]="isFavourite(movie.id)"
+      [userRating]="getUserRating(movie.id)"
+      (movieClick)="onMovieClick($event)"
+    ></app-movie-card>
     }
   </div>
   }

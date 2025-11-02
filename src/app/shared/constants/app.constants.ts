@@ -24,7 +24,7 @@ export const APP_TEXT = {
   SEARCH: 'Search',
   CLEAR: 'Clear',
 
-  CLEAR_ALL: 'Clear All',
+  CLEAR_ALL_FAVOURITES: 'Clear All Favourites',
   CLEAR_ALL_RATINGS: 'Clear All Ratings',
   CLEAR_RATING: 'Clear rating',
 
@@ -42,4 +42,3 @@ export const APP_TEXT = {
   ERROR_LOADING_MOVIE_DETAILS: 'Failed to load movie details',
   ERROR_GENERIC: 'An error occurred. Please try again.',
 } as const;
-
