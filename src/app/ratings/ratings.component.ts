@@ -4,7 +4,11 @@ import { ButtonModule } from 'primeng/button';
 
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
-import { Movie, RatedMovie } from '../shared/models/movie.model';
+import {
+  Movie,
+  RatedMovie,
+  MovieRatingEvent,
+} from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
@@ -44,7 +48,7 @@ export class RatingsComponent implements OnInit {
     this.loadRatedMovies();
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }): void {
+  onRateMovie(event: MovieRatingEvent): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
     this.loadRatedMovies();
   }

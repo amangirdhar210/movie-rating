@@ -10,12 +10,11 @@ import { MessageService } from 'primeng/api';
 import { MovieService } from '../shared/services/movie.service';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
-import { Movie } from '../shared/models/movie.model';
+import { Movie, MovieRatingEvent } from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
-
 
 @Component({
   selector: 'app-trending-movies',
@@ -125,7 +124,7 @@ export class TrendingMoviesComponent implements OnInit {
     this.favouriteService.toggleFavourite(movie);
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }): void {
+  onRateMovie(event: MovieRatingEvent): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
   }
 

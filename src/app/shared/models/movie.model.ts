@@ -32,3 +32,8 @@ export interface MovieRating {
 export interface RatedMovie extends Movie {
   userRating: number;
 }
+
+export interface MovieRatingEvent {
+  movie: Movie;
+  rating: number;
+}

@@ -7,7 +7,7 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
 
-import { Movie } from '../../models/movie.model';
+import { Movie, MovieRatingEvent } from '../../models/movie.model';
 import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
 
 @Component({
@@ -31,7 +31,7 @@ export class MovieDetailModalComponent {
   @Input() userRating = 0;
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() toggleFavourite = new EventEmitter<Movie>();
-  @Output() rateMovie = new EventEmitter<{ movie: Movie; rating: number }>();
+  @Output() rateMovie = new EventEmitter<MovieRatingEvent>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
   readonly TEXT = APP_TEXT;
