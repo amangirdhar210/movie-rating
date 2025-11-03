@@ -1,5 +1,6 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { RatingService } from '../shared/services/rating.service';
+import { FavouriteService } from '../shared/services/favourite.service';
 import { Movie } from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
@@ -20,7 +21,10 @@ export class RatingsComponent implements OnInit {
   showModal = false;
   readonly TEXT = APP_TEXT;
 
-  constructor(private ratingService: RatingService) {}
+  constructor(
+    private ratingService: RatingService,
+    private favouriteService: FavouriteService
+  ) {}
 
   ngOnInit(): void {
     this.loadRatedMovies();
@@ -36,7 +40,7 @@ export class RatingsComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.ratingService.toggleFavourite(movie);
+    this.favouriteService.toggleFavourite(movie);
     this.loadRatedMovies();
   }
 
@@ -46,7 +50,7 @@ export class RatingsComponent implements OnInit {
   }
 
   isFavourite(movieId: number): boolean {
-    return this.ratingService.isFavourite(movieId);
+    return this.favouriteService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {

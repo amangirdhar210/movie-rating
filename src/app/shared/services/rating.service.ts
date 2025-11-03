@@ -5,41 +5,7 @@ import { Movie, MovieRating } from '../models/movie.model';
   providedIn: 'root',
 })
 export class RatingService {
-  private readonly FAVOURITES_KEY = 'favourite_movies';
   private readonly RATINGS_KEY = 'movie_ratings';
-
-  constructor() {}
-
-  getFavourites(): Movie[] {
-    const favourites = localStorage.getItem(this.FAVOURITES_KEY);
-    return favourites ? JSON.parse(favourites) : [];
-  }
-
-  addToFavourites(movie: Movie): void {
-    const favourites = this.getFavourites();
-    if (!this.isFavourite(movie.id)) {
-      favourites.push(movie);
-      localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(favourites));
-    }
-  }
-
-  removeFromFavourites(movieId: number): void {
-    const favourites = this.getFavourites();
-    const updated = favourites.filter((m) => m.id !== movieId);
-    localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(updated));
-  }
-
-  isFavourite(movieId: number): boolean {
-    return this.getFavourites().some((m) => m.id === movieId);
-  }
-
-  toggleFavourite(movie: Movie): void {
-    if (this.isFavourite(movie.id)) {
-      this.removeFromFavourites(movie.id);
-    } else {
-      this.addToFavourites(movie);
-    }
-  }
 
   getRatings(): MovieRating[] {
     const ratings = localStorage.getItem(this.RATINGS_KEY);
