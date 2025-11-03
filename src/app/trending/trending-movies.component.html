@@ -59,12 +59,11 @@
   } @if (!loading() && movies.length > 0) {
   <div class="content-section">
     <div class="movies-grid">
-      @for (movie of movies; track movie.id; let i = $index) {
+      @for (movie of movies; track movie.id) {
       <app-movie-card
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
-        [priority]="i < 6"
         (movieClick)="onMovieClick($event)"
       ></app-movie-card>
       }

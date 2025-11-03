@@ -15,6 +15,12 @@
   align-items: center;
   gap: 0.5rem;
   color: #ffffff;
+  cursor: pointer;
+  transition: opacity 0.2s ease;
+
+  &:hover {
+    opacity: 0.8;
+  }
 
   .pi-video {
     font-size: 2rem;

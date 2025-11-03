@@ -11,10 +11,9 @@ import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
   styleUrl: './movie-card.component.scss',
 })
 export class MovieCardComponent {
-  @Input() movie!: Movie;
+  @Input({ required: true }) movie!: Movie;
   @Input() isFavourite = false;
   @Input() userRating: number = 0;
-  @Input() priority = false;
   @Output() movieClick = new EventEmitter<Movie>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
