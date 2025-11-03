@@ -1,7 +1,7 @@
 <div class="favourites-container">
   <div class="header-section">
     <h1 class="page-title">{{ TEXT.MY_FAVOURITE_MOVIES }}</h1>
-    @if (favouriteMovies().length > 0) {
+    @if (favouriteMovies().length > 0 && !loading()) {
     <button
       pButton
       icon="pi pi-trash"
@@ -12,7 +12,11 @@
     }
   </div>
 
-  @if (favouriteMovies().length === 0) {
+  @if (loading()) {
+  <div class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+  } @else if (favouriteMovies().length === 0) {
   <div class="empty-state">
     <i class="pi pi-heart empty-icon"></i>
     <p class="empty-title">{{ TEXT.NO_FAVOURITE_MOVIES }}</p>
@@ -20,7 +24,7 @@
       {{ TEXT.NO_FAVOURITES_SUBTITLE }}
     </p>
   </div>
-  } @if (favouriteMovies().length > 0) {
+  } @else {
   <div class="content-section">
     <div class="movies-grid">
       @for (movie of favouriteMovies(); track movie.id) {
@@ -31,6 +35,15 @@
         (movieClick)="onMovieClick($event)"
       ></app-movie-card>
       }
+    </div>
+
+    <div class="pagination-section">
+      <app-paginator
+        [totalRecords]="totalResults"
+        [rows]="20"
+        [currentPage]="currentPage"
+        (pageChange)="onPageChange($event)"
+      ></app-paginator>
     </div>
   </div>
   }

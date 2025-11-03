@@ -41,4 +41,18 @@ export const APP_TEXT = {
   ERROR_SEARCHING_MOVIES: 'Failed to search movies',
   ERROR_LOADING_MOVIE_DETAILS: 'Failed to load movie details',
   ERROR_GENERIC: 'An error occurred. Please try again.',
+  ERROR_LOADING_RATED_MOVIES: 'Failed to load rated movies',
+  ERROR_LOADING_FAVOURITES: 'Failed to load favourites',
+  ERROR_UPDATE_RATING: 'Failed to update rating',
+  ERROR_UPDATE_FAVOURITE: 'Failed to update favourite',
+  ERROR_CLEAR_RATINGS: 'Failed to clear ratings',
+  ERROR_CLEAR_FAVOURITES: 'Failed to clear favourites',
+
+  SUCCESS: 'Success',
+  SUCCESS_RATING_ADDED: 'Rating updated successfully',
+  SUCCESS_RATING_REMOVED: 'Rating removed',
+  SUCCESS_FAVOURITE_ADDED: 'Added to favourites',
+  SUCCESS_FAVOURITE_REMOVED: 'Removed from favourites',
+  SUCCESS_ALL_RATINGS_CLEARED: 'All ratings cleared',
+  SUCCESS_ALL_FAVOURITES_CLEARED: 'All favourites cleared',
 } as const;

@@ -30,7 +30,7 @@ export class MovieService {
     return this.http
       .get<TrendingMoviesResponse>(`/trending/movie/${timeWindow}?page=${page}`)
       .pipe(
-        tap((response) => {
+        tap((response: TrendingMoviesResponse): void => {
           this.cacheService.save(cacheKey, response, this.TRENDING_CACHE_TTL);
         })
       );
@@ -52,7 +52,7 @@ export class MovieService {
         `/search/movie?query=${encodeURIComponent(query)}&page=${page}`
       )
       .pipe(
-        tap((response) => {
+        tap((response: TrendingMoviesResponse): void => {
           this.cacheService.save(cacheKey, response, this.SEARCH_CACHE_TTL);
         })
       );

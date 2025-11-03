@@ -9,3 +9,5 @@ export const DEFAULT_POSTER_PATH = '/placeholder-poster.jpg';
 export const API_KEY = environment.movieApiKey;
 
 export const API_READ_ACCESS_TOKEN = environment.movieApiAccssToken;
+
+export const ACCOUNT_ID = '22427194';

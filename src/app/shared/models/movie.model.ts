@@ -30,10 +30,53 @@ export interface MovieRating {
 }
 
 export interface RatedMovie extends Movie {
+  rating?: number;
   userRating: number;
 }
 
 export interface MovieRatingEvent {
   movie: Movie;
   rating: number;
+}
+
+export interface RatedMoviesResponse {
+  page: number;
+  results: RatedMovie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface FavouriteMoviesResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface AddRatingRequest {
+  value: number;
+}
+
+export interface AddRatingResponse {
+  success: boolean;
+  status_code: number;
+  status_message: string;
+}
+
+export interface DeleteRatingResponse {
+  success: boolean;
+  status_code: number;
+  status_message: string;
+}
+
+export interface AddFavouriteRequest {
+  media_type: string;
+  media_id: number;
+  favorite: boolean;
+}
+
+export interface AddFavouriteResponse {
+  success: boolean;
+  status_code: number;
+  status_message: string;
 }

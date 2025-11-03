@@ -1,45 +1,104 @@
 import { Injectable } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-import { Movie } from '../models/movie.model';
+import { Observable, map, forkJoin, of } from 'rxjs';
+
+import {
+  Movie,
+  FavouriteMoviesResponse,
+  AddFavouriteRequest,
+  AddFavouriteResponse,
+} from '../models/movie.model';
+import { ACCOUNT_ID } from '../constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class FavouriteService {
-  private readonly FAVOURITES_KEY = 'favourite_movies';
+  private favouriteMoviesCache: Set<number> = new Set();
 
-  getFavourites(): Movie[] {
-    const favourites = localStorage.getItem(this.FAVOURITES_KEY);
-    return favourites ? JSON.parse(favourites) : [];
-  }
+  constructor(private http: HttpClient) {}
 
-  addToFavourites(movie: Movie): void {
-    const favourites = this.getFavourites();
-    if (!this.isFavourite(movie.id)) {
-      favourites.push(movie);
-      localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(favourites));
-    }
-  }
+  getFavourites(page: number = 1): Observable<FavouriteMoviesResponse> {
+    return this.http
+      .get<FavouriteMoviesResponse>(
+        `/account/${ACCOUNT_ID}/favorite/movies?page=${page}`
+      )
+      .pipe(
+        map((response: FavouriteMoviesResponse): FavouriteMoviesResponse => {
+          if (page === 1) {
+            this.favouriteMoviesCache.clear();
+          }
 
-  removeFromFavourites(movieId: number): void {
-    const favourites = this.getFavourites();
-    const updated = favourites.filter((movie) => movie.id !== movieId);
-    localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(updated));
+          response.results.forEach((movie: Movie) => {
+            this.favouriteMoviesCache.add(movie.id);
+          });
+
+          return response;
+        })
+      );
   }
 
   isFavourite(movieId: number): boolean {
-    return this.getFavourites().some((movie) => movie.id === movieId);
+    return this.favouriteMoviesCache.has(movieId);
   }
 
-  toggleFavourite(movie: Movie): void {
-    if (this.isFavourite(movie.id)) {
-      this.removeFromFavourites(movie.id);
+  addToFavourites(movieId: number): Observable<AddFavouriteResponse> {
+    this.favouriteMoviesCache.add(movieId);
+
+    const request: AddFavouriteRequest = {
+      media_type: 'movie',
+      media_id: movieId,
+      favorite: true,
+    };
+
+    return this.http
+      .post<AddFavouriteResponse>(`/account/${ACCOUNT_ID}/favorite`, request)
+      .pipe(
+        map((response: AddFavouriteResponse): AddFavouriteResponse => {
+          return response;
+        })
+      );
+  }
+
+  removeFromFavourites(movieId: number): Observable<AddFavouriteResponse> {
+    this.favouriteMoviesCache.delete(movieId);
+
+    const request: AddFavouriteRequest = {
+      media_type: 'movie',
+      media_id: movieId,
+      favorite: false,
+    };
+
+    return this.http
+      .post<AddFavouriteResponse>(`/account/${ACCOUNT_ID}/favorite`, request)
+      .pipe(
+        map((response: AddFavouriteResponse): AddFavouriteResponse => {
+          return response;
+        })
+      );
+  }
+
+  toggleFavourite(movieId: number): Observable<AddFavouriteResponse> {
+    if (this.isFavourite(movieId)) {
+      return this.removeFromFavourites(movieId);
     } else {
-      this.addToFavourites(movie);
+      return this.addToFavourites(movieId);
     }
   }
 
-  clearAllFavourites(): void {
-    localStorage.removeItem(this.FAVOURITES_KEY);
+  clearAllFavourites(): Observable<AddFavouriteResponse[]> {
+    const movieIds: number[] = Array.from(this.favouriteMoviesCache.values());
+
+    if (movieIds.length === 0) {
+      return of([]);
+    }
+
+    const removeRequests: Observable<AddFavouriteResponse>[] = movieIds.map(
+      (movieId: number): Observable<AddFavouriteResponse> =>
+        this.removeFromFavourites(movieId)
+    );
+
+    return forkJoin(removeRequests);
   }
 }

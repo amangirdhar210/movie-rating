@@ -77,6 +77,13 @@
   }
 }
 
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+}
+
 .content-section {
   display: flex;
   flex-direction: column;
@@ -111,4 +118,8 @@
     grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
     gap: 0.75rem;
   }
+}
+
+.pagination-section {
+  margin-top: 1rem;
 }

@@ -64,7 +64,7 @@ export class CacheService {
     const cacheStore = this.getCacheStore();
     let hasExpired = false;
 
-    Object.keys(cacheStore).forEach((key) => {
+    Object.keys(cacheStore).forEach((key: string): void => {
       if (now > cacheStore[key].expiry) {
         delete cacheStore[key];
         hasExpired = true;

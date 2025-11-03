@@ -50,7 +50,13 @@ export class TrendingMoviesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.loadRatingsAndFavourites();
     this.loadTrendingMovies();
+  }
+
+  loadRatingsAndFavourites(): void {
+    this.ratingService.getRatedMovies().subscribe();
+    this.favouriteService.getFavourites().subscribe();
   }
 
   loadTrendingMovies(page: number = 1): void {
@@ -121,11 +127,67 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.favouriteService.toggleFavourite(movie);
+    this.favouriteService.toggleFavourite(movie.id).subscribe({
+      next: (): void => {
+        const isFavourite: boolean = this.favouriteService.isFavourite(
+          movie.id
+        );
+        this.messageService.add({
+          severity: 'success',
+          summary: this.TEXT.SUCCESS,
+          detail: isFavourite
+            ? this.TEXT.SUCCESS_FAVOURITE_ADDED
+            : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
+        });
+
+        this.favouriteService.getFavourites().subscribe((): void => {
+          const currentMovie: Movie | null = this.selectedMovie;
+          this.showModal = false;
+          setTimeout((): void => {
+            this.selectedMovie = currentMovie;
+            this.showModal = true;
+          }, 50);
+        });
+      },
+      error: (): void => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.TEXT.ERROR,
+          detail: this.TEXT.ERROR_UPDATE_FAVOURITE,
+        });
+      },
+    });
   }
 
   onRateMovie(event: MovieRatingEvent): void {
-    this.ratingService.setRating(event.movie.id, event.rating, event.movie);
+    const isRatingRemoved: boolean = event.rating === 0;
+    this.ratingService.setRating(event.movie.id, event.rating).subscribe({
+      next: (): void => {
+        this.messageService.add({
+          severity: 'success',
+          summary: this.TEXT.SUCCESS,
+          detail: isRatingRemoved
+            ? this.TEXT.SUCCESS_RATING_REMOVED
+            : this.TEXT.SUCCESS_RATING_ADDED,
+        });
+
+        this.ratingService.getRatedMovies().subscribe((): void => {
+          const currentMovie: Movie | null = this.selectedMovie;
+          this.showModal = false;
+          setTimeout((): void => {
+            this.selectedMovie = currentMovie;
+            this.showModal = true;
+          }, 50);
+        });
+      },
+      error: (): void => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.TEXT.ERROR,
+          detail: this.TEXT.ERROR_UPDATE_RATING,
+        });
+      },
+    });
   }
 
   isFavourite(movieId: number): boolean {
