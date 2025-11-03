@@ -1,18 +1,15 @@
 import { Injectable } from '@angular/core';
-import { TrendingMoviesResponse } from './movie.service';
-
-interface CacheData {
-  value: TrendingMoviesResponse;
-  expiry: number;
-}
+import { CacheData, CacheStore } from '../models/cache.model';
+import { TrendingMoviesResponse } from '../models/movie.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
-  private cacheStore: Map<string, CacheData> = new Map();
+  private readonly CACHE_KEY = 'movie_cache_store';
 
   constructor() {
+    this.removeExpired();
     setInterval(() => {
       this.removeExpired();
     }, 60000);
@@ -20,12 +17,15 @@ export class CacheService {
 
   save(key: string, value: TrendingMoviesResponse, minutes: number): void {
     const expiry = Date.now() + minutes * 60 * 1000;
-    this.cacheStore.set(key, { value, expiry });
+    const cacheStore = this.getCacheStore();
+    cacheStore[key] = { value, expiry };
+    this.setCacheStore(cacheStore);
     console.log(`Cache saved: ${key}`);
   }
 
   retrieve(key: string): TrendingMoviesResponse | null {
-    const cached = this.cacheStore.get(key);
+    const cacheStore = this.getCacheStore();
+    const cached = cacheStore[key];
 
     if (!cached) {
       console.log(`Cache miss: ${key}`);
@@ -33,7 +33,8 @@ export class CacheService {
     }
 
     if (Date.now() > cached.expiry) {
-      this.cacheStore.delete(key);
+      delete cacheStore[key];
+      this.setCacheStore(cacheStore);
       console.log(`Cache expired: ${key}`);
       return null;
     }
@@ -43,15 +44,35 @@ export class CacheService {
   }
 
   clearAll(): void {
-    this.cacheStore.clear();
+    localStorage.removeItem(this.CACHE_KEY);
+  }
+
+  private getCacheStore(): CacheStore {
+    const stored = localStorage.getItem(this.CACHE_KEY);
+    if (!stored) {
+      return {};
+    }
+    return JSON.parse(stored);
+  }
+
+  private setCacheStore(cacheStore: CacheStore): void {
+    localStorage.setItem(this.CACHE_KEY, JSON.stringify(cacheStore));
   }
 
   private removeExpired(): void {
     const now = Date.now();
-    this.cacheStore.forEach((item, key) => {
-      if (now > item.expiry) {
-        this.cacheStore.delete(key);
+    const cacheStore = this.getCacheStore();
+    let hasExpired = false;
+
+    Object.keys(cacheStore).forEach((key) => {
+      if (now > cacheStore[key].expiry) {
+        delete cacheStore[key];
+        hasExpired = true;
       }
     });
+
+    if (hasExpired) {
+      this.setCacheStore(cacheStore);
+    }
   }
 }

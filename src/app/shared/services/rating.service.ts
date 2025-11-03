@@ -1,11 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Movie } from '../models/movie.model';
-
-interface MovieRating {
-  movieId: number;
-  rating: number;
-  movie: Movie;
-}
+import { Movie, MovieRating } from '../models/movie.model';
 
 @Injectable({
   providedIn: 'root',
