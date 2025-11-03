@@ -1,6 +1,8 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { DecimalPipe, UpperCasePipe } from '@angular/common';
+
 import { CardModule } from 'primeng/card';
+
 import { Movie } from '../../models/movie.model';
 import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
 

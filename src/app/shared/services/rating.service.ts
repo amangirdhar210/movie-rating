@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
-import { Movie, MovieRating } from '../models/movie.model';
+
+import { Movie, MovieRating, RatedMovie } from '../models/movie.model';
 
 @Injectable({
   providedIn: 'root',
@@ -14,7 +15,7 @@ export class RatingService {
 
   getRating(movieId: number): number {
     const ratings = this.getRatings();
-    const rating = ratings.find((r) => r.movieId === movieId);
+    const rating = ratings.find((rating) => rating.movieId === movieId);
     return rating ? rating.rating : 0;
   }
 
@@ -25,7 +26,9 @@ export class RatingService {
     }
 
     const ratings = this.getRatings();
-    const existingIndex = ratings.findIndex((r) => r.movieId === movieId);
+    const existingIndex = ratings.findIndex(
+      (rating) => rating.movieId === movieId
+    );
 
     if (existingIndex !== -1) {
       ratings[existingIndex].rating = rating;
@@ -45,21 +48,23 @@ export class RatingService {
 
   removeRating(movieId: number): void {
     const ratings = this.getRatings();
-    const updated = ratings.filter((r) => r.movieId !== movieId);
+    const updated = ratings.filter((rating) => rating.movieId !== movieId);
     localStorage.setItem(this.RATINGS_KEY, JSON.stringify(updated));
   }
 
-  getRatedMovies(): Array<Movie & { userRating: number }> {
+  getRatedMovies(): RatedMovie[] {
     const ratings = this.getRatings();
-    const ratedMovies: Array<Movie & { userRating: number }> = [];
+    const ratedMovies: RatedMovie[] = [];
 
     ratings.forEach((rating) => {
       if (rating.movie && rating.movie.id) {
-        ratedMovies.push({ ...rating.movie, userRating: rating.rating });
+        ratedMovies.push({ ...rating?.movie, userRating: rating?.rating });
       }
     });
 
-    return ratedMovies.sort((a, b) => b.userRating - a.userRating);
+    return ratedMovies.sort(
+      (movie1, movie2) => movie2.userRating - movie1.userRating
+    );
   }
 
   clearAllRatings(): void {

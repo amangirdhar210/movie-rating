@@ -1,13 +1,13 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+
+import { ButtonModule } from 'primeng/button';
+
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
-import { Movie } from '../shared/models/movie.model';
+import { Movie, RatedMovie } from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { ButtonModule } from 'primeng/button';
-
-type RatedMovie = Movie & { userRating: number };
 
 @Component({
   selector: 'app-ratings',

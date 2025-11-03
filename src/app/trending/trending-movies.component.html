@@ -7,11 +7,11 @@
       <button
         pButton
         icon="pi pi-refresh"
-        (click)="clearCacheAndReload()"
-        [disabled]="loading()"
         class="p-button-text p-button-sm cache-button"
         pTooltip="Clear cache and refresh"
         tooltipPosition="bottom"
+        [disabled]="loading()"
+        (click)="clearCacheAndReload()"
       ></button>
     </div>
 
@@ -19,21 +19,21 @@
       <div class="search-input-wrapper">
         <i class="pi pi-search search-icon"></i>
         <input
-          type="text"
           pInputText
-          [(ngModel)]="searchQuery"
-          (keyup.enter)="onSearch()"
-          [placeholder]="TEXT.SEARCH_PLACEHOLDER"
+          type="text"
           class="search-input"
+          [placeholder]="TEXT.SEARCH_PLACEHOLDER"
+          (keyup.enter)="onSearch()"
+          [(ngModel)]="searchQuery"
         />
       </div>
       <button
         pButton
-        [label]="TEXT.SEARCH"
         icon="pi pi-search"
-        (click)="onSearch()"
-        [disabled]="loading()"
         class="search-button"
+        [label]="TEXT.SEARCH"
+        [disabled]="loading()"
+        (click)="onSearch()"
       ></button>
       @if (isSearchMode) {
       <button
@@ -82,10 +82,10 @@
 </div>
 
 <app-movie-detail-modal
-  [(visible)]="showModal"
   [movie]="selectedMovie"
   [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
   [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
   (toggleFavourite)="onToggleFavourite($event)"
   (rateMovie)="onRateMovie($event)"
+  [(visible)]="showModal"
 ></app-movie-detail-modal>

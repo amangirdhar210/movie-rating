@@ -28,3 +28,7 @@ export interface MovieRating {
   rating: number;
   movie: Movie;
 }
+
+export interface RatedMovie extends Movie {
+  userRating: number;
+}

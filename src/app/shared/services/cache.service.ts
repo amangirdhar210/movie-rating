@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CacheData, CacheStore } from '../models/cache.model';
+import { CacheStore } from '../models/cache.model';
 import { TrendingMoviesResponse } from '../models/movie.model';
 
 @Injectable({
@@ -35,7 +35,7 @@ export class CacheService {
     if (Date.now() > cached.expiry) {
       delete cacheStore[key];
       this.setCacheStore(cacheStore);
-      console.log(`Cache expired: ${key}`);
+      console.log(`Cache expired: ${key}`); // only for demo
       return null;
     }
 

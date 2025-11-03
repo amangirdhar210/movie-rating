@@ -1,4 +1,5 @@
 import { Injectable } from '@angular/core';
+
 import { Movie } from '../models/movie.model';
 
 @Injectable({
@@ -22,12 +23,12 @@ export class FavouriteService {
 
   removeFromFavourites(movieId: number): void {
     const favourites = this.getFavourites();
-    const updated = favourites.filter((m) => m.id !== movieId);
+    const updated = favourites.filter((movie) => movie.id !== movieId);
     localStorage.setItem(this.FAVOURITES_KEY, JSON.stringify(updated));
   }
 
   isFavourite(movieId: number): boolean {
-    return this.getFavourites().some((m) => m.id === movieId);
+    return this.getFavourites().some((movie) => movie.id === movieId);
   }
 
   toggleFavourite(movie: Movie): void {
