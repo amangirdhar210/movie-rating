@@ -1,17 +1,20 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { MovieService } from '../shared/services/movie.service';
-import { RatingService } from '../shared/services/rating.service';
-import { Movie } from '../shared/models/movie.model';
-import { APP_TEXT } from '../shared/constants';
-import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
-import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
+
 import { InputTextModule } from 'primeng/inputtext';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
+
+import { MovieService } from '../shared/services/movie.service';
+import { RatingService } from '../shared/services/rating.service';
+import { FavouriteService } from '../shared/services/favourite.service';
+import { Movie, MovieRatingEvent } from '../shared/models/movie.model';
+import { APP_TEXT } from '../shared/constants';
+import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
+import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
+import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 
 @Component({
   selector: 'app-trending-movies',
@@ -42,6 +45,7 @@ export class TrendingMoviesComponent implements OnInit {
   constructor(
     private movieService: MovieService,
     private ratingService: RatingService,
+    private favouriteService: FavouriteService,
     private messageService: MessageService
   ) {}
 
@@ -117,15 +121,15 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.ratingService.toggleFavourite(movie);
+    this.favouriteService.toggleFavourite(movie);
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }): void {
+  onRateMovie(event: MovieRatingEvent): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
   }
 
   isFavourite(movieId: number): boolean {
-    return this.ratingService.isFavourite(movieId);
+    return this.favouriteService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {

@@ -1,12 +1,17 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+
+import { ButtonModule } from 'primeng/button';
+
 import { RatingService } from '../shared/services/rating.service';
-import { Movie } from '../shared/models/movie.model';
+import { FavouriteService } from '../shared/services/favourite.service';
+import {
+  Movie,
+  RatedMovie,
+  MovieRatingEvent,
+} from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { ButtonModule } from 'primeng/button';
-
-type RatedMovie = Movie & { userRating: number };
 
 @Component({
   selector: 'app-ratings',
@@ -20,7 +25,10 @@ export class RatingsComponent implements OnInit {
   showModal = false;
   readonly TEXT = APP_TEXT;
 
-  constructor(private ratingService: RatingService) {}
+  constructor(
+    private ratingService: RatingService,
+    private favouriteService: FavouriteService
+  ) {}
 
   ngOnInit(): void {
     this.loadRatedMovies();
@@ -36,17 +44,17 @@ export class RatingsComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.ratingService.toggleFavourite(movie);
+    this.favouriteService.toggleFavourite(movie);
     this.loadRatedMovies();
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }): void {
+  onRateMovie(event: MovieRatingEvent): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
     this.loadRatedMovies();
   }
 
   isFavourite(movieId: number): boolean {
-    return this.ratingService.isFavourite(movieId);
+    return this.favouriteService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {
@@ -54,9 +62,7 @@ export class RatingsComponent implements OnInit {
   }
 
   clearAllRatings(): void {
-    this.ratedMovies().forEach((movie: RatedMovie) => {
-      this.ratingService.removeRating(movie.id);
-    });
+    this.ratingService.clearAllRatings();
     this.loadRatedMovies();
   }
 }

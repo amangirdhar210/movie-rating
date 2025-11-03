@@ -1,13 +1,13 @@
 <p-dialog
-  [(visible)]="visible"
+  styleClass="movie-detail-dialog"
   [modal]="true"
   [draggable]="false"
   [resizable]="false"
   [dismissableMask]="true"
   [closable]="true"
   [style]="{ width: '90vw', maxWidth: '900px' }"
-  styleClass="movie-detail-dialog"
   (onHide)="onHide()"
+  [(visible)]="visible"
 >
   <ng-template pTemplate="content">
     @if (movie) {

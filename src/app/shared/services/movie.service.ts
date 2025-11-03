@@ -1,16 +1,11 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { Movie } from '../models/movie.model';
-import { CacheService } from './cache.service';
 
-export interface TrendingMoviesResponse {
-  page: number;
-  results: Movie[];
-  total_pages: number;
-  total_results: number;
-}
+import { TrendingMoviesResponse } from '../models/movie.model';
+import { CacheService } from './cache.service';
 
 @Injectable({
   providedIn: 'root',

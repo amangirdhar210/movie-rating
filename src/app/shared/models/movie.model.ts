@@ -15,3 +15,25 @@ export interface Movie {
   vote_average: number;
   vote_count: number;
 }
+
+export interface TrendingMoviesResponse {
+  page: number;
+  results: Movie[];
+  total_pages: number;
+  total_results: number;
+}
+
+export interface MovieRating {
+  movieId: number;
+  rating: number;
+  movie: Movie;
+}
+
+export interface RatedMovie extends Movie {
+  userRating: number;
+}
+
+export interface MovieRatingEvent {
+  movie: Movie;
+  rating: number;
+}

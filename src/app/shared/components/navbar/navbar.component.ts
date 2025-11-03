@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
-import { APP_TEXT } from '../shared/constants';
+
+import { APP_TEXT } from '../../constants';
 
 @Component({
   selector: 'app-navbar',
@@ -14,8 +15,6 @@ export class NavbarComponent {
   constructor(private router: Router) {}
 
   navigateToTrending(): void {
-    this.router.navigate(['/trending']).then(() => {
-      window.location.reload();
-    });
+    this.router.navigate(['/trending']);
   }
 }

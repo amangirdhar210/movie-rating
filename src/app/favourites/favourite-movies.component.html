@@ -4,10 +4,10 @@
     @if (favouriteMovies().length > 0) {
     <button
       pButton
-      [label]="TEXT.CLEAR_ALL_FAVOURITES"
       icon="pi pi-trash"
-      (click)="clearAllFavourites()"
       class="p-button-danger clear-all-button"
+      [label]="TEXT.CLEAR_ALL_FAVOURITES"
+      (click)="clearAllFavourites()"
     ></button>
     }
   </div>
@@ -37,10 +37,10 @@
 </div>
 
 <app-movie-detail-modal
-  [(visible)]="showModal"
   [movie]="selectedMovie"
   [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
   [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
   (toggleFavourite)="onToggleFavourite($event)"
   (rateMovie)="onRateMovie($event)"
+  [(visible)]="showModal"
 ></app-movie-detail-modal>

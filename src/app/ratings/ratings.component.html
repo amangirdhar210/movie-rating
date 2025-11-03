@@ -4,9 +4,9 @@
     @if (ratedMovies().length > 0) {
     <button
       pButton
-      [label]="TEXT.CLEAR_ALL_RATINGS"
       icon="pi pi-trash"
       class="p-button-danger"
+      [label]="TEXT.CLEAR_ALL_RATINGS"
       (click)="clearAllRatings()"
     ></button>
     }
@@ -34,11 +34,11 @@
   }
 
   <app-movie-detail-modal
-    [(visible)]="showModal"
     [movie]="selectedMovie"
     [isFavourite]="selectedMovie ? isFavourite(selectedMovie.id) : false"
     [userRating]="selectedMovie ? getUserRating(selectedMovie.id) : 0"
     (toggleFavourite)="onToggleFavourite($event)"
     (rateMovie)="onRateMovie($event)"
+    [(visible)]="showModal"
   ></app-movie-detail-modal>
 </div>

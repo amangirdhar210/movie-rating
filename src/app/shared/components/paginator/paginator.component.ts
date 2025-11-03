@@ -1,4 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+
 import { PaginatorModule, PaginatorState } from 'primeng/paginator';
 
 @Component({

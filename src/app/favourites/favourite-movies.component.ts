@@ -1,10 +1,13 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
-import { RatingService } from '../shared/services/rating.service';
-import { Movie } from '../shared/models/movie.model';
+
+import { ButtonModule } from 'primeng/button';
+
 import { APP_TEXT } from '../shared/constants';
+import { RatingService } from '../shared/services/rating.service';
+import { FavouriteService } from '../shared/services/favourite.service';
+import { Movie, MovieRatingEvent } from '../shared/models/movie.model';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-favourite-movies',
@@ -18,14 +21,17 @@ export class FavouriteMoviesComponent implements OnInit {
   showModal = false;
   readonly TEXT = APP_TEXT;
 
-  constructor(private ratingService: RatingService) {}
+  constructor(
+    private ratingService: RatingService,
+    private favouriteService: FavouriteService
+  ) {}
 
   ngOnInit(): void {
     this.loadFavourites();
   }
 
   loadFavourites(): void {
-    this.favouriteMovies.set(this.ratingService.getFavourites());
+    this.favouriteMovies.set(this.favouriteService.getFavourites());
   }
 
   onMovieClick(movie: Movie): void {
@@ -34,16 +40,16 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.ratingService.toggleFavourite(movie);
+    this.favouriteService.toggleFavourite(movie);
     this.loadFavourites();
   }
 
-  onRateMovie(event: { movie: Movie; rating: number }): void {
+  onRateMovie(event: MovieRatingEvent): void {
     this.ratingService.setRating(event.movie.id, event.rating, event.movie);
   }
 
   isFavourite(movieId: number): boolean {
-    return this.ratingService.isFavourite(movieId);
+    return this.favouriteService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {
@@ -51,9 +57,7 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   clearAllFavourites(): void {
-    this.favouriteMovies().forEach((movie: Movie) => {
-      this.ratingService.removeFromFavourites(movie.id);
-    });
+    this.favouriteService.clearAllFavourites();
     this.loadFavourites();
   }
 }
