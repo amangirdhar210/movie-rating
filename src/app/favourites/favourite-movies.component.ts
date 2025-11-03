@@ -55,9 +55,7 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   clearAllFavourites(): void {
-    this.favouriteMovies().forEach((movie: Movie) => {
-      this.favouriteService.removeFromFavourites(movie.id);
-    });
+    this.favouriteService.clearAllFavourites();
     this.loadFavourites();
   }
 }

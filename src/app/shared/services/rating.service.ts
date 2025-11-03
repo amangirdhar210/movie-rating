@@ -61,4 +61,8 @@ export class RatingService {
 
     return ratedMovies.sort((a, b) => b.userRating - a.userRating);
   }
+
+  clearAllRatings(): void {
+    localStorage.removeItem(this.RATINGS_KEY);
+  }
 }

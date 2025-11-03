@@ -37,4 +37,8 @@ export class FavouriteService {
       this.addToFavourites(movie);
     }
   }
+
+  clearAllFavourites(): void {
+    localStorage.removeItem(this.FAVOURITES_KEY);
+  }
 }

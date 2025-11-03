@@ -12,7 +12,7 @@ export class CacheService {
     this.removeExpired();
     setInterval(() => {
       this.removeExpired();
-    }, 60000);
+    }, 120000);
   }
 
   save(key: string, value: TrendingMoviesResponse, minutes: number): void {

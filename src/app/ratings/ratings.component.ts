@@ -58,9 +58,7 @@ export class RatingsComponent implements OnInit {
   }
 
   clearAllRatings(): void {
-    this.ratedMovies().forEach((movie: RatedMovie) => {
-      this.ratingService.removeRating(movie.id);
-    });
+    this.ratingService.clearAllRatings();
     this.loadRatedMovies();
   }
 }
