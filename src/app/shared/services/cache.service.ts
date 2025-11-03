@@ -20,7 +20,7 @@ export class CacheService {
     const cacheStore = this.getCacheStore();
     cacheStore[key] = { value, expiry };
     this.setCacheStore(cacheStore);
-    console.log(`Cache saved: ${key}`);
+    console.log(`Cache saved: ${key}`); // only for caching demo
   }
 
   retrieve(key: string): TrendingMoviesResponse | null {
@@ -28,18 +28,18 @@ export class CacheService {
     const cached = cacheStore[key];
 
     if (!cached) {
-      console.log(`Cache miss: ${key}`);
+      console.log(`Cache miss: ${key}`); // only for caching demo
       return null;
     }
 
     if (Date.now() > cached.expiry) {
       delete cacheStore[key];
       this.setCacheStore(cacheStore);
-      console.log(`Cache expired: ${key}`); // only for demo
+      console.log(`Cache expired: ${key}`); // only for caching demo
       return null;
     }
 
-    console.log(`Cache hit: ${key}`);
+    console.log(`Cache hit: ${key}`); // only for caching demo
     return cached.value;
   }
 
