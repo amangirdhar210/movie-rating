@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of, tap, switchMap } from 'rxjs';
+import {
+  Observable,
+  map,
+  forkJoin,
+  of,
+  tap,
+  switchMap,
+  catchError,
+  throwError,
+} from 'rxjs';
 
 import {
   Movie,
@@ -79,6 +88,7 @@ export class FavouriteService {
   }
 
   addToFavourites(movieId: number): Observable<AddFavouriteResponse> {
+    const wasAlreadyFavourite: boolean = this.favouriteMoviesCache.has(movieId);
     this.favouriteMoviesCache.add(movieId);
 
     const request: AddFavouriteRequest = {
@@ -92,11 +102,18 @@ export class FavouriteService {
       .pipe(
         tap((): void => {
           this.invalidateFavouritesCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (!wasAlreadyFavourite) {
+            this.favouriteMoviesCache.delete(movieId);
+          }
+          return throwError(() => error);
         })
       );
   }
 
   removeFromFavourites(movieId: number): Observable<AddFavouriteResponse> {
+    const wasAlreadyFavourite: boolean = this.favouriteMoviesCache.has(movieId);
     this.favouriteMoviesCache.delete(movieId);
 
     const request: AddFavouriteRequest = {
@@ -110,6 +127,12 @@ export class FavouriteService {
       .pipe(
         tap((): void => {
           this.invalidateFavouritesCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (wasAlreadyFavourite) {
+            this.favouriteMoviesCache.add(movieId);
+          }
+          return throwError(() => error);
         })
       );
   }

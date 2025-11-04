@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of, tap, switchMap } from 'rxjs';
+import {
+  Observable,
+  map,
+  forkJoin,
+  of,
+  tap,
+  switchMap,
+  catchError,
+  throwError,
+} from 'rxjs';
 
 import {
   RatedMovie,
@@ -91,19 +100,37 @@ export class RatingService {
       return this.removeRating(movieId);
     }
 
+    const previousRating: number = this.ratedMoviesCache.get(movieId) || 0;
     this.ratedMoviesCache.set(movieId, rating);
 
-    const request: AddRatingRequest = { value: rating };
+    const request: AddRatingRequest = this.createRatingRequest(rating);
+
     return this.http
       .post<AddRatingResponse>(`/movie/${movieId}/rating`, request)
       .pipe(
         tap((): void => {
           this.invalidateRatingsCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (previousRating === 0) {
+            this.ratedMoviesCache.delete(movieId);
+          } else {
+            this.ratedMoviesCache.set(movieId, previousRating);
+          }
+          return throwError(() => error);
         })
       );
   }
 
+  private createRatingRequest(rating: number): AddRatingRequest {
+    const request: AddRatingRequest = {
+      value: rating,
+    };
+    return request;
+  }
+
   removeRating(movieId: number): Observable<DeleteRatingResponse> {
+    const previousRating: number = this.ratedMoviesCache.get(movieId) || 0;
     this.ratedMoviesCache.delete(movieId);
 
     return this.http
@@ -111,6 +138,12 @@ export class RatingService {
       .pipe(
         tap((): void => {
           this.invalidateRatingsCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (previousRating > 0) {
+            this.ratedMoviesCache.set(movieId, previousRating);
+          }
+          return throwError(() => error);
         })
       );
   }
