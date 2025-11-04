@@ -6,13 +6,14 @@ import { tap } from 'rxjs/operators';
 
 import { TrendingMoviesResponse } from '../models/movie.model';
 import { CacheService } from './cache.service';
+import { CachePrefix } from '../models/cache.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  private readonly TRENDING_CACHE_TTL = 5;
-  private readonly SEARCH_CACHE_TTL = 3;
+  private readonly TRENDING_CACHE_TTL_MINUTES = 5;
+  private readonly SEARCH_CACHE_TTL_MINUTES = 3;
 
   constructor(private http: HttpClient, private cacheService: CacheService) {}
 
@@ -20,8 +21,9 @@ export class MovieService {
     timeWindow: 'day' | 'week' = 'week',
     page: number = 1
   ): Observable<TrendingMoviesResponse> {
-    const cacheKey = `trending_${timeWindow}_page_${page}`;
-    const cached = this.cacheService.retrieve(cacheKey);
+    const cacheKey: string = `${CachePrefix.TRENDING}_${timeWindow}_page_${page}`;
+    const cached: TrendingMoviesResponse | null =
+      this.cacheService.retrieve<TrendingMoviesResponse>(cacheKey);
 
     if (cached) {
       return of(cached);
@@ -31,7 +33,11 @@ export class MovieService {
       .get<TrendingMoviesResponse>(`/trending/movie/${timeWindow}?page=${page}`)
       .pipe(
         tap((response: TrendingMoviesResponse): void => {
-          this.cacheService.save(cacheKey, response, this.TRENDING_CACHE_TTL);
+          this.cacheService.save(
+            cacheKey,
+            response,
+            this.TRENDING_CACHE_TTL_MINUTES
+          );
         })
       );
   }
@@ -40,8 +46,11 @@ export class MovieService {
     query: string,
     page: number = 1
   ): Observable<TrendingMoviesResponse> {
-    const cacheKey = `search_${query.toLowerCase()}_page_${page}`;
-    const cached = this.cacheService.retrieve(cacheKey);
+    const cacheKey: string = `${
+      CachePrefix.SEARCH
+    }_${query.toLowerCase()}_page_${page}`;
+    const cached: TrendingMoviesResponse | null =
+      this.cacheService.retrieve<TrendingMoviesResponse>(cacheKey);
 
     if (cached) {
       return of(cached);
@@ -53,7 +62,11 @@ export class MovieService {
       )
       .pipe(
         tap((response: TrendingMoviesResponse): void => {
-          this.cacheService.save(cacheKey, response, this.SEARCH_CACHE_TTL);
+          this.cacheService.save(
+            cacheKey,
+            response,
+            this.SEARCH_CACHE_TTL_MINUTES
+          );
         })
       );
   }

@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of } from 'rxjs';
+import { Observable, map, forkJoin, of, tap } from 'rxjs';
 
 import {
   RatedMovie,
@@ -11,40 +11,75 @@ import {
   DeleteRatingResponse,
 } from '../models/movie.model';
 import { ACCOUNT_ID } from '../constants';
+import { CacheService } from './cache.service';
+import { CachePrefix } from '../models/cache.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class RatingService {
+  private readonly CACHE_TTL_MINUTES = 10;
   private ratedMoviesCache: Map<number, number> = new Map();
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private cacheService: CacheService) {}
 
   getRatedMovies(page: number = 1): Observable<RatedMoviesResponse> {
+    const cacheKey: string = `${CachePrefix.RATINGS}_page_${page}`;
+    const cachedData: RatedMoviesResponse | null =
+      this.cacheService.retrieve<RatedMoviesResponse>(cacheKey);
+
+    if (cachedData) {
+      this.updateInMemoryCache(cachedData, page);
+      return of(cachedData);
+    }
+
     return this.http
       .get<RatedMoviesResponse>(
         `/account/${ACCOUNT_ID}/rated/movies?page=${page}`
       )
       .pipe(
         map((response: RatedMoviesResponse): RatedMoviesResponse => {
-          if (page === 1) {
-            this.ratedMoviesCache.clear();
-          }
-
-          response.results.forEach((movie: RatedMovie) => {
-            const rating: number = movie.rating || movie.userRating || 0;
-            this.ratedMoviesCache.set(movie.id, rating);
-            movie.userRating = rating;
-          });
-
-          response.results.sort(
-            (a: RatedMovie, b: RatedMovie): number =>
-              b.userRating - a.userRating
-          );
-
-          return response;
+          return this.processRatedMoviesResponse(response, page);
+        }),
+        tap((response: RatedMoviesResponse): void => {
+          this.cacheService.save(cacheKey, response, this.CACHE_TTL_MINUTES);
         })
       );
+  }
+
+  private processRatedMoviesResponse(
+    response: RatedMoviesResponse,
+    page: number
+  ): RatedMoviesResponse {
+    if (page === 1) {
+      this.ratedMoviesCache.clear();
+    }
+
+    response.results.forEach((movie: RatedMovie): void => {
+      const rating: number = movie.rating || movie.userRating || 0;
+      this.ratedMoviesCache.set(movie.id, rating);
+      movie.userRating = rating;
+    });
+
+    response.results.sort(
+      (a: RatedMovie, b: RatedMovie): number => b.userRating - a.userRating
+    );
+
+    return response;
+  }
+
+  private updateInMemoryCache(
+    response: RatedMoviesResponse,
+    page: number
+  ): void {
+    if (page === 1) {
+      this.ratedMoviesCache.clear();
+    }
+
+    response.results.forEach((movie: RatedMovie): void => {
+      const rating: number = movie.rating || movie.userRating || 0;
+      this.ratedMoviesCache.set(movie.id, rating);
+    });
   }
 
   getRating(movieId: number): number {
@@ -62,8 +97,8 @@ export class RatingService {
     return this.http
       .post<AddRatingResponse>(`/movie/${movieId}/rating`, request)
       .pipe(
-        map((response: AddRatingResponse): AddRatingResponse => {
-          return response;
+        tap((): void => {
+          this.invalidateRatingsCache();
         })
       );
   }
@@ -74,8 +109,8 @@ export class RatingService {
     return this.http
       .delete<DeleteRatingResponse>(`/movie/${movieId}/rating`)
       .pipe(
-        map((response: DeleteRatingResponse): DeleteRatingResponse => {
-          return response;
+        tap((): void => {
+          this.invalidateRatingsCache();
         })
       );
   }
@@ -92,6 +127,14 @@ export class RatingService {
         this.removeRating(movieId)
     );
 
-    return forkJoin(deleteRequests);
+    return forkJoin(deleteRequests).pipe(
+      tap((): void => {
+        this.invalidateRatingsCache();
+      })
+    );
+  }
+
+  private invalidateRatingsCache(): void {
+    this.cacheService.invalidateByPrefix(CachePrefix.RATINGS);
   }
 }

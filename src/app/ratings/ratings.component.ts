@@ -1,4 +1,10 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  WritableSignal,
+  ChangeDetectorRef,
+} from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -42,7 +48,8 @@ export class RatingsComponent implements OnInit {
   constructor(
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -97,15 +104,7 @@ export class RatingsComponent implements OnInit {
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
-
-        this.favouriteService.getFavourites().subscribe((): void => {
-          const currentMovie: Movie | null = this.selectedMovie;
-          this.showModal = false;
-          setTimeout((): void => {
-            this.selectedMovie = currentMovie;
-            this.showModal = true;
-          }, 50);
-        });
+        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -130,15 +129,11 @@ export class RatingsComponent implements OnInit {
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
 
-        this.showModal = false;
-        this.loadRatedMovies(this.currentPage);
-
-        if (!isRemovingRating) {
-          const currentMovie: Movie | null = this.selectedMovie;
-          setTimeout((): void => {
-            this.selectedMovie = currentMovie;
-            this.showModal = true;
-          }, 100);
+        if (isRemovingRating) {
+          this.showModal = false;
+          this.loadRatedMovies(this.currentPage);
+        } else {
+          this.cdr.detectChanges();
         }
       },
       error: (): void => {

@@ -1,4 +1,10 @@
-import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  signal,
+  WritableSignal,
+  ChangeDetectorRef,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -46,7 +52,8 @@ export class TrendingMoviesComponent implements OnInit {
     private movieService: MovieService,
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService
+    private messageService: MessageService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -139,15 +146,7 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
-
-        this.favouriteService.getFavourites().subscribe((): void => {
-          const currentMovie: Movie | null = this.selectedMovie;
-          this.showModal = false;
-          setTimeout((): void => {
-            this.selectedMovie = currentMovie;
-            this.showModal = true;
-          }, 50);
-        });
+        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -170,15 +169,7 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_RATING_REMOVED
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
-
-        this.ratingService.getRatedMovies().subscribe((): void => {
-          const currentMovie: Movie | null = this.selectedMovie;
-          this.showModal = false;
-          setTimeout((): void => {
-            this.selectedMovie = currentMovie;
-            this.showModal = true;
-          }, 50);
-        });
+        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({

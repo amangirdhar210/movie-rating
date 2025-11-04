@@ -1,58 +1,85 @@
 import { Injectable } from '@angular/core';
-import { CacheStore } from '../models/cache.model';
-import { TrendingMoviesResponse } from '../models/movie.model';
+import { CacheStore, CachePrefix } from '../models/cache.model';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
   private readonly CACHE_KEY = 'movie_cache_store';
+  private readonly CLEANUP_INTERVAL_MS = 120000;
 
   constructor() {
     this.removeExpired();
-    setInterval(() => {
+    setInterval((): void => {
       this.removeExpired();
-    }, 120000);
+    }, this.CLEANUP_INTERVAL_MS);
   }
 
-  save(key: string, value: TrendingMoviesResponse, minutes: number): void {
-    const expiry = Date.now() + minutes * 60 * 1000;
-    const cacheStore = this.getCacheStore();
+  save<T>(key: string, value: T, ttlMinutes: number): void {
+    const expiry: number = Date.now() + ttlMinutes * 60 * 1000;
+    const cacheStore: CacheStore = this.getCacheStore();
     cacheStore[key] = { value, expiry };
     this.setCacheStore(cacheStore);
-    console.log(`Cache saved: ${key}`); // only for caching demo
+    console.log(`Cache saved: ${key}`);
   }
 
-  retrieve(key: string): TrendingMoviesResponse | null {
-    const cacheStore = this.getCacheStore();
+  retrieve<T>(key: string): T | null {
+    const cacheStore: CacheStore = this.getCacheStore();
     const cached = cacheStore[key];
 
     if (!cached) {
-      console.log(`Cache miss: ${key}`); // only for caching demo
+      console.log(`Cache miss: ${key}`);
       return null;
     }
 
     if (Date.now() > cached.expiry) {
       delete cacheStore[key];
       this.setCacheStore(cacheStore);
-      console.log(`Cache expired: ${key}`); // only for caching demo
+      console.log(`Cache expired: ${key}`);
       return null;
     }
 
-    console.log(`Cache hit: ${key}`); // only for caching demo
-    return cached.value;
+    console.log(`Cache hit: ${key}`);
+    return cached.value as T;
+  }
+
+  invalidate(key: string): void {
+    const cacheStore: CacheStore = this.getCacheStore();
+    if (cacheStore[key]) {
+      delete cacheStore[key];
+      this.setCacheStore(cacheStore);
+      console.log(`Cache invalidated: ${key}`);
+    }
+  }
+
+  invalidateByPrefix(prefix: CachePrefix): void {
+    const cacheStore: CacheStore = this.getCacheStore();
+    const keysToDelete: string[] = Object.keys(cacheStore).filter(
+      (key: string): boolean => key.startsWith(prefix)
+    );
+
+    if (keysToDelete.length > 0) {
+      keysToDelete.forEach((key: string): void => {
+        delete cacheStore[key];
+      });
+      this.setCacheStore(cacheStore);
+      console.log(
+        `Cache invalidated for prefix: ${prefix}, keys: ${keysToDelete.length}`
+      );
+    }
   }
 
   clearAll(): void {
     localStorage.removeItem(this.CACHE_KEY);
+    console.log('All cache cleared');
   }
 
   private getCacheStore(): CacheStore {
-    const stored = localStorage.getItem(this.CACHE_KEY);
+    const stored: string | null = localStorage.getItem(this.CACHE_KEY);
     if (!stored) {
       return {};
     }
-    return JSON.parse(stored);
+    return JSON.parse(stored) as CacheStore;
   }
 
   private setCacheStore(cacheStore: CacheStore): void {
@@ -60,8 +87,8 @@ export class CacheService {
   }
 
   private removeExpired(): void {
-    const now = Date.now();
-    const cacheStore = this.getCacheStore();
+    const now: number = Date.now();
+    const cacheStore: CacheStore = this.getCacheStore();
     let hasExpired = false;
 
     Object.keys(cacheStore).forEach((key: string): void => {
@@ -73,6 +100,7 @@ export class CacheService {
 
     if (hasExpired) {
       this.setCacheStore(cacheStore);
+      console.log('Expired cache entries removed');
     }
   }
 }
