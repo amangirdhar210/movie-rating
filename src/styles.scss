@@ -1,4 +1,5 @@
 @use "tailwindcss" as *;
+@use "app/shared/styles/theme-variables" as theme;
 @import "primeicons/primeicons.css";
 
 * {
@@ -10,10 +11,14 @@
 body {
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica,
     Arial, sans-serif;
-  background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+  background: linear-gradient(
+    135deg,
+    theme.$bg-primary 0%,
+    theme.$bg-secondary 100%
+  );
   background-attachment: fixed;
   min-height: 100vh;
-  color: #fff;
+  color: theme.$text-primary;
   overflow-x: hidden;
 }
 
@@ -29,15 +34,15 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #1a1a2e;
+  background: theme.$scrollbar-track;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #667eea;
+  background: theme.$scrollbar-thumb;
   border-radius: 4px;
 
   &:hover {
-    background: #5568d3;
+    background: theme.$scrollbar-thumb-hover;
   }
 }
 
@@ -56,7 +61,7 @@ body {
 
   .p-progressspinner {
     .p-progress-spinner-circle {
-      stroke: #667eea;
+      stroke: theme.$primary-color;
     }
   }
 
@@ -70,19 +75,19 @@ body {
         min-width: 2.25rem;
         height: 2.25rem;
         border-radius: 6px;
-        color: #cbd5e0;
-        border: 1px solid rgba(102, 126, 234, 0.3);
+        color: theme.$text-secondary;
+        border: 1px solid theme.$border-primary;
         transition: background 0.2s ease;
 
         &:hover {
-          background: rgba(102, 126, 234, 0.15);
-          color: #ffffff;
+          background: theme.$hover-overlay;
+          color: theme.$text-primary;
         }
 
         &.p-highlight {
-          background: #667eea;
-          color: #ffffff;
-          border-color: #667eea;
+          background: theme.$primary-color;
+          color: theme.$text-primary;
+          border-color: theme.$primary-color;
         }
       }
     }
@@ -94,18 +99,18 @@ body {
       min-width: 2.25rem;
       height: 2.25rem;
       border-radius: 6px;
-      color: #cbd5e0;
-      border: 1px solid rgba(102, 126, 234, 0.3);
+      color: theme.$text-secondary;
+      border: 1px solid theme.$border-primary;
       transition: background 0.2s ease;
 
       &:hover:not(:disabled) {
-        background: rgba(102, 126, 234, 0.15);
-        color: #ffffff;
+        background: theme.$hover-overlay;
+        color: theme.$text-primary;
       }
     }
 
     .p-paginator-current {
-      color: #cbd5e0;
+      color: theme.$text-secondary;
       font-size: 0.9rem;
     }
   }
@@ -113,31 +118,31 @@ body {
   .p-dialog {
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: theme.$shadow-xl;
 
     .p-dialog-header {
-      background: #1a1a2e;
-      border-bottom: 1px solid rgba(102, 126, 234, 0.2);
+      background: theme.$bg-surface;
+      border-bottom: 1px solid theme.$border-primary-light;
       padding: 1rem;
 
       .p-dialog-title {
-        color: #ffffff;
+        color: theme.$text-primary;
         font-weight: 600;
       }
 
       .p-dialog-header-icon {
-        color: #cbd5e0;
+        color: theme.$text-secondary;
 
         &:hover {
-          color: #ffffff;
-          background: rgba(102, 126, 234, 0.15);
+          color: theme.$text-primary;
+          background: theme.$hover-overlay;
         }
       }
     }
 
     .p-dialog-content {
-      background: #1a1a2e;
-      color: #cbd5e0;
+      background: theme.$bg-surface;
+      color: theme.$text-secondary;
     }
   }
 }

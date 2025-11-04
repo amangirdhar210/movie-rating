@@ -1,3 +1,5 @@
+@use "../shared/styles/theme-variables" as theme;
+
 .favourites-container {
   max-width: 1920px;
   margin: 0 auto;
@@ -25,7 +27,7 @@
 .page-title {
   font-size: 2rem;
   font-weight: 600;
-  color: #ffffff;
+  color: theme.$text-primary;
   margin: 0;
 
   @media (max-width: 768px) {
@@ -52,14 +54,14 @@
 .empty-icon {
   font-size: 4rem;
   margin-bottom: 1rem;
-  color: #667eea;
+  color: theme.$primary-color;
   opacity: 0.4;
 }
 
 .empty-title {
   font-size: 1.5rem;
   font-weight: 600;
-  color: #ffffff;
+  color: theme.$text-primary;
   margin: 0 0 0.5rem 0;
 
   @media (max-width: 768px) {
@@ -69,7 +71,7 @@
 
 .empty-subtitle {
   font-size: 1rem;
-  color: #a0aec0;
+  color: theme.$text-tertiary;
   margin: 0;
 
   @media (max-width: 768px) {

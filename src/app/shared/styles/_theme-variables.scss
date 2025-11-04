@@ -1,0 +1,54 @@
+
+$primary-color: #667eea;
+$primary-hover: #5568d3;
+$primary-dark: #4c51bf;
+
+$bg-primary: #0f172a;
+$bg-secondary: #1e293b;
+$bg-surface: #1a1a2e;
+$bg-surface-alt: #0f0f1e;
+
+$text-primary: #ffffff;
+$text-secondary: #cbd5e0;
+$text-tertiary: #a0aec0;
+$text-disabled: #718096;
+
+$accent-warning: #fbbf24;
+$accent-danger: #ef4444;
+$accent-success: #10b981;
+$accent-info: #3b82f6;
+
+$hover-overlay: rgba(102, 126, 234, 0.15);
+$active-overlay: rgba(102, 126, 234, 0.25);
+$focus-border: #667eea;
+
+$overlay-dark-60: rgba(0, 0, 0, 0.6);
+$overlay-dark-85: rgba(0, 0, 0, 0.85);
+$overlay-dark-80: rgba(0, 0, 0, 0.8);
+$overlay-backdrop-20: rgba(0, 0, 0, 0.2);
+$overlay-backdrop-80: rgba(26, 26, 46, 0.8);
+$overlay-surface-90: rgba(26, 26, 46, 0.9);
+$overlay-surface-50: rgba(26, 26, 46, 0.5);
+
+$border-primary: rgba(102, 126, 234, 0.3);
+$border-primary-light: rgba(102, 126, 234, 0.2);
+$border-danger: rgba(239, 68, 68, 0.5);
+
+$badge-favourite-bg: rgba(239, 68, 68, 0.85);
+$badge-rating-bg: rgba(251, 191, 36, 0.85);
+
+$shadow-light: rgba(0, 0, 0, 0.15);
+$shadow-medium: rgba(0, 0, 0, 0.3);
+$shadow-heavy: rgba(0, 0, 0, 0.4);
+$shadow-extra-heavy: rgba(0, 0, 0, 0.5);
+
+$scrollbar-track: #1a1a2e;
+$scrollbar-thumb: #667eea;
+$scrollbar-thumb-hover: #5568d3;
+
+$stat-background: rgba(102, 126, 234, 0.08);
+
+$shadow-sm: 0 2px 8px $shadow-medium;
+$shadow-md: 0 4px 12px $shadow-heavy;
+$shadow-lg: 0 6px 16px $shadow-heavy;
+$shadow-xl: 0 10px 30px $shadow-extra-heavy;

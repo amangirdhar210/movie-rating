@@ -1,3 +1,5 @@
+@use "../shared/styles/theme-variables" as theme;
+
 .ratings-container {
   max-width: 1920px;
   margin: 0 auto;
@@ -25,7 +27,7 @@
     font-size: 2rem;
     font-weight: 600;
     margin: 0;
-    color: #ffffff;
+    color: theme.$text-primary;
 
     @media (max-width: 768px) {
       font-size: 1.5rem;
@@ -44,7 +46,7 @@
 
   .empty-icon {
     font-size: 4rem;
-    color: #667eea;
+    color: theme.$primary-color;
     opacity: 0.4;
     margin-bottom: 1rem;
   }
@@ -52,7 +54,7 @@
   .empty-title {
     font-size: 1.5rem;
     font-weight: 600;
-    color: #ffffff;
+    color: theme.$text-primary;
     margin: 0 0 0.5rem 0;
 
     @media (max-width: 768px) {
@@ -62,7 +64,7 @@
 
   .empty-text {
     font-size: 1rem;
-    color: #a0aec0;
+    color: theme.$text-tertiary;
     margin: 0;
 
     @media (max-width: 768px) {
