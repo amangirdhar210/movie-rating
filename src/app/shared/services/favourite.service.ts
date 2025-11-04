@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of, tap } from 'rxjs';
+import { Observable, map, forkJoin, of, tap, switchMap } from 'rxjs';
 
 import {
   Movie,
@@ -123,18 +123,43 @@ export class FavouriteService {
   }
 
   clearAllFavourites(): Observable<AddFavouriteResponse[]> {
-    const movieIds: number[] = Array.from(this.favouriteMoviesCache.values());
+    return this.getFavourites(1).pipe(
+      switchMap((firstPage: FavouriteMoviesResponse): Observable<number[]> => {
+        const totalPages: number = firstPage.total_pages;
 
-    if (movieIds.length === 0) {
-      return of([]);
-    }
+        if (totalPages === 0) {
+          return of([]);
+        }
 
-    const removeRequests: Observable<AddFavouriteResponse>[] = movieIds.map(
-      (movieId: number): Observable<AddFavouriteResponse> =>
-        this.removeFromFavourites(movieId)
-    );
+        const pageRequests: Observable<FavouriteMoviesResponse>[] = [];
+        for (let page = 1; page <= totalPages; page++) {
+          pageRequests.push(this.getFavourites(page));
+        }
 
-    return forkJoin(removeRequests).pipe(
+        return forkJoin(pageRequests).pipe(
+          map((allPages: FavouriteMoviesResponse[]): number[] => {
+            const allMovieIds: number[] = [];
+            allPages.forEach((pageResponse: FavouriteMoviesResponse): void => {
+              pageResponse.results.forEach((movie: Movie): void => {
+                allMovieIds.push(movie.id);
+              });
+            });
+            return allMovieIds;
+          })
+        );
+      }),
+      switchMap((movieIds: number[]): Observable<AddFavouriteResponse[]> => {
+        if (movieIds.length === 0) {
+          return of([]);
+        }
+
+        const removeRequests: Observable<AddFavouriteResponse>[] = movieIds.map(
+          (movieId: number): Observable<AddFavouriteResponse> =>
+            this.removeFromFavourites(movieId)
+        );
+
+        return forkJoin(removeRequests);
+      }),
       tap((): void => {
         this.invalidateFavouritesCache();
       })

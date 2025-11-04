@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of, tap } from 'rxjs';
+import { Observable, map, forkJoin, of, tap, switchMap } from 'rxjs';
 
 import {
   RatedMovie,
@@ -116,18 +116,43 @@ export class RatingService {
   }
 
   clearAllRatings(): Observable<DeleteRatingResponse[]> {
-    const movieIds: number[] = Array.from(this.ratedMoviesCache.keys());
+    return this.getRatedMovies(1).pipe(
+      switchMap((firstPage: RatedMoviesResponse): Observable<number[]> => {
+        const totalPages: number = firstPage.total_pages;
 
-    if (movieIds.length === 0) {
-      return of([]);
-    }
+        if (totalPages === 0) {
+          return of([]);
+        }
 
-    const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
-      (movieId: number): Observable<DeleteRatingResponse> =>
-        this.removeRating(movieId)
-    );
+        const pageRequests: Observable<RatedMoviesResponse>[] = [];
+        for (let page = 1; page <= totalPages; page++) {
+          pageRequests.push(this.getRatedMovies(page));
+        }
 
-    return forkJoin(deleteRequests).pipe(
+        return forkJoin(pageRequests).pipe(
+          map((allPages: RatedMoviesResponse[]): number[] => {
+            const allMovieIds: number[] = [];
+            allPages.forEach((pageResponse: RatedMoviesResponse): void => {
+              pageResponse.results.forEach((movie: RatedMovie): void => {
+                allMovieIds.push(movie.id);
+              });
+            });
+            return allMovieIds;
+          })
+        );
+      }),
+      switchMap((movieIds: number[]): Observable<DeleteRatingResponse[]> => {
+        if (movieIds.length === 0) {
+          return of([]);
+        }
+
+        const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
+          (movieId: number): Observable<DeleteRatingResponse> =>
+            this.removeRating(movieId)
+        );
+
+        return forkJoin(deleteRequests);
+      }),
       tap((): void => {
         this.invalidateRatingsCache();
       })
