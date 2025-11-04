@@ -1,7 +1,7 @@
 <div class="ratings-container">
   <div class="header">
     <h2 class="title">{{ TEXT.MY_RATINGS }}</h2>
-    @if (ratedMovies().length > 0) {
+    @if (ratedMovies().length > 0 && !loading()) {
     <button
       pButton
       icon="pi pi-trash"
@@ -12,7 +12,11 @@
     }
   </div>
 
-  @if (ratedMovies().length === 0) {
+  @if (loading()) {
+  <div class="loading-container">
+    <p-progressSpinner></p-progressSpinner>
+  </div>
+  } @else if (ratedMovies().length === 0) {
   <div class="empty-state">
     <i class="pi pi-star empty-icon"></i>
     <h3 class="empty-title">{{ TEXT.NO_RATINGS_YET }}</h3>
@@ -20,16 +24,27 @@
       {{ TEXT.NO_RATINGS_SUBTITLE }}
     </p>
   </div>
-  } @if (ratedMovies().length > 0) {
-  <div class="movies-grid">
-    @for (movie of ratedMovies(); track movie.id) {
-    <app-movie-card
-      [movie]="movie"
-      [isFavourite]="isFavourite(movie.id)"
-      [userRating]="getUserRating(movie.id)"
-      (movieClick)="onMovieClick($event)"
-    ></app-movie-card>
-    }
+  } @else {
+  <div class="content-section">
+    <div class="movies-grid">
+      @for (movie of ratedMovies(); track movie.id) {
+      <app-movie-card
+        [movie]="movie"
+        [isFavourite]="isFavourite(movie.id)"
+        [userRating]="getUserRating(movie.id)"
+        (movieClick)="onMovieClick($event)"
+      ></app-movie-card>
+      }
+    </div>
+
+    <div class="pagination-section">
+      <app-paginator
+        [totalRecords]="totalResults"
+        [rows]="20"
+        [currentPage]="currentPage"
+        (pageChange)="onPageChange($event)"
+      ></app-paginator>
+    </div>
   </div>
   }
 

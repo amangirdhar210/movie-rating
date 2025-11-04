@@ -1,5 +1,7 @@
+@use "../../styles/theme-variables" as theme;
+
 .navbar {
-  background: rgba(26, 26, 46, 0.9);
+  background: theme.$overlay-surface-90;
   padding: 0.875rem 1.5rem;
   display: flex;
   align-items: center;
@@ -14,7 +16,7 @@
   display: flex;
   align-items: center;
   gap: 0.5rem;
-  color: #ffffff;
+  color: theme.$text-primary;
   cursor: pointer;
   transition: opacity 0.2s ease;
 
@@ -43,30 +45,30 @@
   gap: 0.5rem;
   padding: 0.6rem 1rem;
   border-radius: 6px;
-  color: #cbd5e0;
+  color: theme.$text-secondary;
   text-decoration: none;
   transition: background 0.2s ease, color 0.2s ease;
   cursor: pointer;
   font-weight: 500;
 
   i {
-    color: #667eea;
+    color: theme.$primary-color;
     font-size: 0.95rem;
   }
 
   &:hover {
-    background: rgba(102, 126, 234, 0.15);
-    color: #ffffff;
+    background: theme.$hover-overlay;
+    color: theme.$text-primary;
   }
 
   &.active {
-    background: rgba(102, 126, 234, 0.15);
-    color: #ffffff;
+    background: theme.$hover-overlay;
+    color: theme.$text-primary;
 
     &:focus,
     &:active {
-      background: rgba(102, 126, 234, 0.15);
-      color: #ffffff;
+      background: theme.$hover-overlay;
+      color: theme.$text-primary;
     }
   }
 }
