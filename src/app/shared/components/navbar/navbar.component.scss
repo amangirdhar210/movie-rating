@@ -19,9 +19,10 @@
   color: theme.$text-primary;
   cursor: pointer;
   transition: opacity 0.2s ease;
+  will-change: opacity;
 
   &:hover {
-    opacity: 0.8;
+    opacity: 0.9;
   }
 
   .pi-video {
