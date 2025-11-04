@@ -17,7 +17,6 @@ import {
   RatedMovie,
   MovieRatingEvent,
   RatedMoviesResponse,
-  FavouriteMoviesResponse,
 } from '../shared/models/movie.model';
 import { APP_TEXT } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
