@@ -7,7 +7,7 @@ import { RatingModule } from 'primeng/rating';
 import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
 
-import { Movie, MovieRatingEvent } from '../../models/movie.model';
+import { Movie, MovieRatingEvent } from '../../models/app.models';
 import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
 
 @Component({

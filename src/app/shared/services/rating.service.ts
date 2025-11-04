@@ -9,7 +9,7 @@ import {
   AddRatingRequest,
   AddRatingResponse,
   DeleteRatingResponse,
-} from '../models/movie.model';
+} from '../models/app.models';
 import { ACCOUNT_ID } from '../constants';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';

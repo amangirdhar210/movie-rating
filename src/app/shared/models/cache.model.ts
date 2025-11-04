@@ -2,7 +2,7 @@ import {
   TrendingMoviesResponse,
   RatedMoviesResponse,
   FavouriteMoviesResponse,
-} from './movie.model';
+} from './app.models';
 
 export interface CacheData<
   T = TrendingMoviesResponse | RatedMoviesResponse | FavouriteMoviesResponse

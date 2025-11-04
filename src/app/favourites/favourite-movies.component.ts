@@ -13,7 +13,7 @@ import { MessageService } from 'primeng/api';
 import { APP_TEXT } from '../shared/constants';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
-import { Movie, MovieRatingEvent } from '../shared/models/movie.model';
+import { Movie, MovieRatingEvent } from '../shared/models/app.models';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';

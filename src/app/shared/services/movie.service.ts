@@ -4,7 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable, of } from 'rxjs';
 import { tap } from 'rxjs/operators';
 
-import { TrendingMoviesResponse } from '../models/movie.model';
+import { TrendingMoviesResponse } from '../models/app.models';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';
 
