@@ -7,9 +7,8 @@ A modern, responsive movie browsing and rating application built with Angular 19
 - **Browse Trending Movies**: View the latest trending movies with detailed information
 - **Advanced Search**: Search for any movie with real-time results
 - **Movie Details Modal**: Click any movie to see comprehensive details including overview, ratings, and stats
-- **Personal Ratings**: Rate movies on a 5-star scale
+- **Personal Ratings**: Rate movies on a 10-star scale
 - **Favorites Management**: Add movies to your favorites for quick access
-- **Fully Responsive**: Optimized for all devices from mobile to desktop
 - **Modern UI**: Beautiful gradient design with smooth animations
 
 ## Tech Stack
@@ -74,13 +73,6 @@ src/app/
 ```
 
 ## Key Features Implementation
-
-### Responsive Design
-
-- Mobile-first approach with breakpoints for all screen sizes
-- Adaptive grid layouts that adjust from 1-5 columns
-- Touch-friendly UI elements
-- Optimized images and lazy loading
 
 ### Movie Detail Modal
 
