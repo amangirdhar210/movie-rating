@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  WritableSignal,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -33,17 +27,16 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class FavouriteMoviesComponent implements OnInit {
   favouriteMovies: WritableSignal<Movie[]> = signal<Movie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
-  currentPage = 1;
-  totalResults = 0;
+  currentPage: number = 1;
+  totalResults: number = 0;
   selectedMovie: Movie | null = null;
-  showModal = false;
+  showModal: boolean = false;
   readonly TEXT = APP_TEXT;
 
   constructor(
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +110,6 @@ export class FavouriteMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_RATING_REMOVED
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({

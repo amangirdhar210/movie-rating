@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  WritableSignal,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -40,20 +34,19 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class TrendingMoviesComponent implements OnInit {
   movies: Movie[] = [];
   loading: WritableSignal<boolean> = signal<boolean>(false);
-  currentPage = 1;
-  totalResults = 0;
-  searchQuery = '';
-  isSearchMode = false;
+  currentPage: number = 1;
+  totalResults: number = 0;
+  searchQuery: string = '';
+  isSearchMode: boolean = false;
   selectedMovie: Movie | null = null;
-  showModal = false;
+  showModal: boolean = false;
   readonly TEXT = APP_TEXT;
 
   constructor(
     private movieService: MovieService,
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -146,7 +139,6 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -169,7 +161,6 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_RATING_REMOVED
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({

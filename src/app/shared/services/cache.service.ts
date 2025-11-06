@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { CacheStore, CachePrefix } from '../models/cache.model';
+import { CacheStore, CachePrefix, CacheData } from '../models/cache.model';
 
 @Injectable({
   providedIn: 'root',
@@ -25,7 +25,7 @@ export class CacheService {
 
   retrieve<T>(key: string): T | null {
     const cacheStore: CacheStore = this.getCacheStore();
-    const cached = cacheStore[key];
+    const cached: CacheData | undefined = cacheStore[key];
 
     if (!cached) {
       console.log(`Cache miss: ${key}`);
@@ -89,7 +89,7 @@ export class CacheService {
   private removeExpired(): void {
     const now: number = Date.now();
     const cacheStore: CacheStore = this.getCacheStore();
-    let hasExpired = false;
+    let hasExpired: boolean = false;
 
     Object.keys(cacheStore).forEach((key: string): void => {
       if (now > cacheStore[key].expiry) {
