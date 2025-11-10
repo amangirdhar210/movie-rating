@@ -18,7 +18,11 @@ export class CacheService {
   save<T>(key: string, value: T, ttlMinutes: number): void {
     const expiry: number = Date.now() + ttlMinutes * 60 * 1000;
     const cacheStore: CacheStore = this.getCacheStore();
-    cacheStore[key] = { value, expiry };
+    const cacheData: CacheData<T> = {
+      value,
+      expiry,
+    };
+    cacheStore[key] = cacheData;
     this.setCacheStore(cacheStore);
     console.log(`Cache saved: ${key}`);
   }

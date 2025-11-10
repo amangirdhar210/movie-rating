@@ -4,11 +4,17 @@
     @if (favouriteMovies().length > 0 && !loading()) {
     <button
       pButton
-      icon="pi pi-trash"
       class="p-button-danger clear-all-button"
       [label]="TEXT.CLEAR_ALL_FAVOURITES"
+      [disabled]="isDeletingAll()"
       (click)="clearAllFavourites()"
-    ></button>
+    >
+      @if (isDeletingAll()) {
+      <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+      <i class="pi pi-trash"></i>
+      }
+    </button>
     }
   </div>
 

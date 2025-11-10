@@ -70,14 +70,22 @@ export class MovieDetailModalComponent {
 
   onRateChange(): void {
     if (this.movie) {
-      this.rateMovie.emit({ movie: this.movie, rating: this.userRating });
+      const ratingEvent: MovieRatingEvent = {
+        movie: this.movie,
+        rating: this.userRating,
+      };
+      this.rateMovie.emit(ratingEvent);
     }
   }
 
   clearRating(): void {
     this.userRating = 0;
     if (this.movie) {
-      this.rateMovie.emit({ movie: this.movie, rating: 0 });
+      const ratingEvent: MovieRatingEvent = {
+        movie: this.movie,
+        rating: 0,
+      };
+      this.rateMovie.emit(ratingEvent);
     }
   }
 }

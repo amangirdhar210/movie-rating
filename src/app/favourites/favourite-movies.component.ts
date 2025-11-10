@@ -27,6 +27,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class FavouriteMoviesComponent implements OnInit {
   favouriteMovies: WritableSignal<Movie[]> = signal<Movie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
+  isDeletingAll: WritableSignal<boolean> = signal<boolean>(false);
   currentPage: number = 1;
   totalResults: number = 0;
   selectedMovie: Movie | null = null;
@@ -130,6 +131,8 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   clearAllFavourites(): void {
+    this.isDeletingAll.set(true);
+
     this.favouriteService.clearAllFavourites().subscribe({
       next: (): void => {
         this.messageService.add({
@@ -138,6 +141,7 @@ export class FavouriteMoviesComponent implements OnInit {
           detail: this.TEXT.SUCCESS_ALL_FAVOURITES_CLEARED,
         });
         this.loadFavourites(1);
+        this.isDeletingAll.set(false);
       },
       error: (): void => {
         this.messageService.add({
@@ -145,6 +149,7 @@ export class FavouriteMoviesComponent implements OnInit {
           summary: this.TEXT.ERROR,
           detail: this.TEXT.ERROR_CLEAR_FAVOURITES,
         });
+        this.isDeletingAll.set(false);
       },
     });
   }

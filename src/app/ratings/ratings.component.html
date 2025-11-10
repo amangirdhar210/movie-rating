@@ -4,11 +4,17 @@
     @if (ratedMovies().length > 0 && !loading()) {
     <button
       pButton
-      icon="pi pi-trash"
       class="p-button-danger"
       [label]="TEXT.CLEAR_ALL_RATINGS"
+      [disabled]="isDeletingAll()"
       (click)="clearAllRatings()"
-    ></button>
+    >
+      @if (isDeletingAll()) {
+      <i class="pi pi-spin pi-spinner"></i>
+      } @else {
+      <i class="pi pi-trash"></i>
+      }
+    </button>
     }
   </div>
 

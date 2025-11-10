@@ -34,6 +34,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class TrendingMoviesComponent implements OnInit {
   movies: Movie[] = [];
   loading: WritableSignal<boolean> = signal<boolean>(false);
+  isSearching: WritableSignal<boolean> = signal<boolean>(false);
   currentPage: number = 1;
   totalResults: number = 0;
   searchQuery: string = '';
@@ -89,6 +90,7 @@ export class TrendingMoviesComponent implements OnInit {
     }
 
     this.loading.set(true);
+    this.isSearching.set(true);
     this.currentPage = page;
     this.isSearchMode = true;
 
@@ -97,6 +99,7 @@ export class TrendingMoviesComponent implements OnInit {
         this.movies = response.results;
         this.totalResults = response.total_results;
         this.loading.set(false);
+        this.isSearching.set(false);
       },
       error: () => {
         this.messageService.add({
@@ -105,6 +108,7 @@ export class TrendingMoviesComponent implements OnInit {
           detail: this.TEXT.ERROR_SEARCHING_MOVIES,
         });
         this.loading.set(false);
+        this.isSearching.set(false);
       },
     });
   }

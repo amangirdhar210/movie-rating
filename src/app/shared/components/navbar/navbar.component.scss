@@ -38,6 +38,8 @@
 .navbar-menu {
   display: flex;
   gap: 0.4rem;
+  flex-wrap: nowrap;
+  align-items: center;
 }
 
 .nav-item {
@@ -55,6 +57,14 @@
   i {
     color: theme.$primary-color;
     font-size: 0.95rem;
+    display: inline-flex;
+    flex: 0 0 1.1rem;
+    justify-content: center;
+    align-items: center;
+  }
+
+  span {
+    white-space: nowrap;
   }
 
   &:hover {

@@ -32,6 +32,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class RatingsComponent implements OnInit {
   ratedMovies: WritableSignal<RatedMovie[]> = signal<RatedMovie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
+  isDeletingAll: WritableSignal<boolean> = signal<boolean>(false);
   currentPage: number = 1;
   totalResults: number = 0;
   selectedMovie: Movie | null = null;
@@ -144,6 +145,8 @@ export class RatingsComponent implements OnInit {
   }
 
   clearAllRatings(): void {
+    this.isDeletingAll.set(true);
+
     this.ratingService.clearAllRatings().subscribe({
       next: (): void => {
         this.messageService.add({
@@ -152,6 +155,7 @@ export class RatingsComponent implements OnInit {
           detail: this.TEXT.SUCCESS_ALL_RATINGS_CLEARED,
         });
         this.loadRatedMovies(1);
+        this.isDeletingAll.set(false);
       },
       error: (): void => {
         this.messageService.add({
@@ -159,6 +163,7 @@ export class RatingsComponent implements OnInit {
           summary: this.TEXT.ERROR,
           detail: this.TEXT.ERROR_CLEAR_RATINGS,
         });
+        this.isDeletingAll.set(false);
       },
     });
   }
