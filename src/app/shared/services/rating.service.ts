@@ -1,7 +1,16 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
-import { Observable, map, forkJoin, of, tap } from 'rxjs';
+import {
+  Observable,
+  map,
+  forkJoin,
+  of,
+  tap,
+  switchMap,
+  catchError,
+  throwError,
+} from 'rxjs';
 
 import {
   RatedMovie,
@@ -10,7 +19,7 @@ import {
   AddRatingResponse,
   DeleteRatingResponse,
 } from '../models/app.models';
-import { ACCOUNT_ID } from '../constants';
+import { ACCOUNT_ID, APP_CONFIG } from '../constants';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';
 
@@ -18,7 +27,7 @@ import { CachePrefix } from '../models/cache.model';
   providedIn: 'root',
 })
 export class RatingService {
-  private readonly CACHE_TTL_MINUTES = 10;
+  private readonly CACHE_TTL_MINUTES = APP_CONFIG.cache.ttl.ratingsMinutes;
   private ratedMoviesCache: Map<number, number> = new Map();
 
   constructor(private http: HttpClient, private cacheService: CacheService) {}
@@ -91,19 +100,37 @@ export class RatingService {
       return this.removeRating(movieId);
     }
 
+    const previousRating: number = this.ratedMoviesCache.get(movieId) || 0;
     this.ratedMoviesCache.set(movieId, rating);
 
-    const request: AddRatingRequest = { value: rating };
+    const request: AddRatingRequest = this.createRatingRequest(rating);
+
     return this.http
       .post<AddRatingResponse>(`/movie/${movieId}/rating`, request)
       .pipe(
         tap((): void => {
           this.invalidateRatingsCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (previousRating === 0) {
+            this.ratedMoviesCache.delete(movieId);
+          } else {
+            this.ratedMoviesCache.set(movieId, previousRating);
+          }
+          return throwError(() => error);
         })
       );
   }
 
+  private createRatingRequest(rating: number): AddRatingRequest {
+    const request: AddRatingRequest = {
+      value: rating,
+    };
+    return request;
+  }
+
   removeRating(movieId: number): Observable<DeleteRatingResponse> {
+    const previousRating: number = this.ratedMoviesCache.get(movieId) || 0;
     this.ratedMoviesCache.delete(movieId);
 
     return this.http
@@ -111,23 +138,54 @@ export class RatingService {
       .pipe(
         tap((): void => {
           this.invalidateRatingsCache();
+        }),
+        catchError((error: unknown): Observable<never> => {
+          if (previousRating > 0) {
+            this.ratedMoviesCache.set(movieId, previousRating);
+          }
+          return throwError(() => error);
         })
       );
   }
 
   clearAllRatings(): Observable<DeleteRatingResponse[]> {
-    const movieIds: number[] = Array.from(this.ratedMoviesCache.keys());
+    return this.getRatedMovies(1).pipe(
+      switchMap((firstPage: RatedMoviesResponse): Observable<number[]> => {
+        const totalPages: number = firstPage.total_pages;
 
-    if (movieIds.length === 0) {
-      return of([]);
-    }
+        if (totalPages === 0) {
+          return of([]);
+        }
 
-    const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
-      (movieId: number): Observable<DeleteRatingResponse> =>
-        this.removeRating(movieId)
-    );
+        const pageRequests: Observable<RatedMoviesResponse>[] = [];
+        for (let page = 1; page <= totalPages; page++) {
+          pageRequests.push(this.getRatedMovies(page));
+        }
 
-    return forkJoin(deleteRequests).pipe(
+        return forkJoin(pageRequests).pipe(
+          map((allPages: RatedMoviesResponse[]): number[] => {
+            const allMovieIds: number[] = [];
+            allPages.forEach((pageResponse: RatedMoviesResponse): void => {
+              pageResponse.results.forEach((movie: RatedMovie): void => {
+                allMovieIds.push(movie.id);
+              });
+            });
+            return allMovieIds;
+          })
+        );
+      }),
+      switchMap((movieIds: number[]): Observable<DeleteRatingResponse[]> => {
+        if (movieIds.length === 0) {
+          return of([]);
+        }
+
+        const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
+          (movieId: number): Observable<DeleteRatingResponse> =>
+            this.removeRating(movieId)
+        );
+
+        return forkJoin(deleteRequests);
+      }),
       tap((): void => {
         this.invalidateRatingsCache();
       })

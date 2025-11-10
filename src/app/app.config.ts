@@ -8,6 +8,24 @@ import Aura from '@primeng/themes/aura';
 
 import { routes } from './app.routes';
 import { tmdbAPIInterceptor } from './interceptors/api.interceptor';
+import {
+  PrimeNGConfig,
+  PrimeNGTheme,
+  PrimeNGThemeOptions,
+} from './shared/models/app.models';
+
+const primeNGThemeOptions: PrimeNGThemeOptions = {
+  darkModeSelector: false,
+};
+
+const primeNGTheme: PrimeNGTheme = {
+  preset: Aura,
+  options: primeNGThemeOptions,
+};
+
+const primeNGConfig: PrimeNGConfig = {
+  theme: primeNGTheme,
+};
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -16,13 +34,6 @@ export const appConfig: ApplicationConfig = {
     provideAnimationsAsync(),
     provideHttpClient(withInterceptors([tmdbAPIInterceptor])),
     MessageService,
-    providePrimeNG({
-      theme: {
-        preset: Aura,
-        options: {
-          darkModeSelector: false,
-        },
-      },
-    }),
+    providePrimeNG(primeNGConfig),
   ],
 };

@@ -5,12 +5,11 @@
         {{ isSearchMode ? TEXT.SEARCH_RESULTS : TEXT.TRENDING_MOVIES }}
       </h1>
 
-      <!-- ONLY FOR DEMO -->
       <button
         pButton
         icon="pi pi-refresh"
         class="p-button-text p-button-sm cache-button"
-        pTooltip="Clear cache and refresh"
+        pTooltip="Clear cache and refresh (only for demo)"
         tooltipPosition="bottom"
         [disabled]="loading()"
         (click)="clearCacheAndReload()"
@@ -31,12 +30,17 @@
       </div>
       <button
         pButton
-        icon="pi pi-search"
         class="search-button"
         [label]="TEXT.SEARCH"
-        [disabled]="loading()"
+        [disabled]="isSearching()"
         (click)="onSearch()"
-      ></button>
+      >
+        @if (isSearching()) {
+        <i class="pi pi-spin pi-spinner"></i>
+        } @else {
+        <i class="pi pi-search"></i>
+        }
+      </button>
       @if (isSearchMode) {
       <button
         pButton
@@ -74,7 +78,7 @@
     <div class="pagination-section">
       <app-paginator
         [totalRecords]="totalResults"
-        [rows]="20"
+        [rows]="pageSize"
         [currentPage]="currentPage"
         (pageChange)="onPageChange($event)"
       ></app-paginator>

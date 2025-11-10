@@ -1,16 +1,10 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  WritableSignal,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
 import { Movie, MovieRatingEvent } from '../shared/models/app.models';
@@ -33,17 +27,18 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class FavouriteMoviesComponent implements OnInit {
   favouriteMovies: WritableSignal<Movie[]> = signal<Movie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
-  currentPage = 1;
-  totalResults = 0;
+  isDeletingAll: WritableSignal<boolean> = signal<boolean>(false);
+  currentPage: number = 1;
+  totalResults: number = 0;
   selectedMovie: Movie | null = null;
-  showModal = false;
+  showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -117,7 +112,6 @@ export class FavouriteMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_RATING_REMOVED
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -138,6 +132,8 @@ export class FavouriteMoviesComponent implements OnInit {
   }
 
   clearAllFavourites(): void {
+    this.isDeletingAll.set(true);
+
     this.favouriteService.clearAllFavourites().subscribe({
       next: (): void => {
         this.messageService.add({
@@ -146,6 +142,7 @@ export class FavouriteMoviesComponent implements OnInit {
           detail: this.TEXT.SUCCESS_ALL_FAVOURITES_CLEARED,
         });
         this.loadFavourites(1);
+        this.isDeletingAll.set(false);
       },
       error: (): void => {
         this.messageService.add({
@@ -153,6 +150,7 @@ export class FavouriteMoviesComponent implements OnInit {
           summary: this.TEXT.ERROR,
           detail: this.TEXT.ERROR_CLEAR_FAVOURITES,
         });
+        this.isDeletingAll.set(false);
       },
     });
   }

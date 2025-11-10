@@ -80,3 +80,22 @@ export interface AddFavouriteResponse {
   status_code: number;
   status_message: string;
 }
+
+export interface ApiHeaders {
+  [key: string]: string | string[];
+  Accept: string;
+  Authorization: string;
+}
+
+export interface PrimeNGThemeOptions {
+  darkModeSelector: boolean;
+}
+
+export interface PrimeNGTheme {
+  preset: any;
+  options: PrimeNGThemeOptions;
+}
+
+export interface PrimeNGConfig {
+  theme: PrimeNGTheme;
+}

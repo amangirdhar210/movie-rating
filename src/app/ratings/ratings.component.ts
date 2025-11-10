@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  WritableSignal,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -18,7 +12,7 @@ import {
   MovieRatingEvent,
   RatedMoviesResponse,
 } from '../shared/models/app.models';
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
@@ -38,17 +32,18 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class RatingsComponent implements OnInit {
   ratedMovies: WritableSignal<RatedMovie[]> = signal<RatedMovie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
-  currentPage = 1;
-  totalResults = 0;
+  isDeletingAll: WritableSignal<boolean> = signal<boolean>(false);
+  currentPage: number = 1;
+  totalResults: number = 0;
   selectedMovie: Movie | null = null;
-  showModal = false;
+  showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
@@ -103,7 +98,6 @@ export class RatingsComponent implements OnInit {
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -131,8 +125,6 @@ export class RatingsComponent implements OnInit {
         if (isRemovingRating) {
           this.showModal = false;
           this.loadRatedMovies(this.currentPage);
-        } else {
-          this.cdr.detectChanges();
         }
       },
       error: (): void => {
@@ -154,6 +146,8 @@ export class RatingsComponent implements OnInit {
   }
 
   clearAllRatings(): void {
+    this.isDeletingAll.set(true);
+
     this.ratingService.clearAllRatings().subscribe({
       next: (): void => {
         this.messageService.add({
@@ -162,6 +156,7 @@ export class RatingsComponent implements OnInit {
           detail: this.TEXT.SUCCESS_ALL_RATINGS_CLEARED,
         });
         this.loadRatedMovies(1);
+        this.isDeletingAll.set(false);
       },
       error: (): void => {
         this.messageService.add({
@@ -169,6 +164,7 @@ export class RatingsComponent implements OnInit {
           summary: this.TEXT.ERROR,
           detail: this.TEXT.ERROR_CLEAR_RATINGS,
         });
+        this.isDeletingAll.set(false);
       },
     });
   }

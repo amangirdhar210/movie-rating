@@ -1,10 +1,4 @@
-import {
-  Component,
-  OnInit,
-  signal,
-  WritableSignal,
-  ChangeDetectorRef,
-} from '@angular/core';
+import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { InputTextModule } from 'primeng/inputtext';
@@ -17,7 +11,7 @@ import { MovieService } from '../shared/services/movie.service';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
 import { Movie, MovieRatingEvent } from '../shared/models/app.models';
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
@@ -40,25 +34,25 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
 export class TrendingMoviesComponent implements OnInit {
   movies: Movie[] = [];
   loading: WritableSignal<boolean> = signal<boolean>(false);
-  currentPage = 1;
-  totalResults = 0;
-  searchQuery = '';
-  isSearchMode = false;
+  isSearching: WritableSignal<boolean> = signal<boolean>(false);
+  currentPage: number = 1;
+  totalResults: number = 0;
+  searchQuery: string = '';
+  isSearchMode: boolean = false;
   selectedMovie: Movie | null = null;
-  showModal = false;
+  showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private movieService: MovieService,
     private ratingService: RatingService,
     private favouriteService: FavouriteService,
-    private messageService: MessageService,
-    private cdr: ChangeDetectorRef
+    private messageService: MessageService
   ) {}
 
   ngOnInit(): void {
-    this.loadRatingsAndFavourites();
-    this.loadTrendingMovies();
+    this.loadTrendingMovies(1);
   }
 
   loadRatingsAndFavourites(): void {
@@ -72,21 +66,23 @@ export class TrendingMoviesComponent implements OnInit {
     this.isSearchMode = false;
     this.searchQuery = '';
 
-    this.movieService.getTrendingMovies('week', page).subscribe({
-      next: (response) => {
-        this.movies = response.results;
-        this.totalResults = response.total_results;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.TEXT.ERROR,
-          detail: this.TEXT.ERROR_LOADING_TRENDING,
-        });
-        this.loading.set(false);
-      },
-    });
+    this.movieService
+      .getTrendingMovies(APP_CONFIG.defaults.trendingTimeWindow, page)
+      .subscribe({
+        next: (response) => {
+          this.movies = response.results;
+          this.totalResults = response.total_results;
+          this.loading.set(false);
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.TEXT.ERROR,
+            detail: this.TEXT.ERROR_LOADING_TRENDING,
+          });
+          this.loading.set(false);
+        },
+      });
   }
 
   searchMovies(page: number = 1): void {
@@ -96,6 +92,7 @@ export class TrendingMoviesComponent implements OnInit {
     }
 
     this.loading.set(true);
+    this.isSearching.set(true);
     this.currentPage = page;
     this.isSearchMode = true;
 
@@ -104,6 +101,7 @@ export class TrendingMoviesComponent implements OnInit {
         this.movies = response.results;
         this.totalResults = response.total_results;
         this.loading.set(false);
+        this.isSearching.set(false);
       },
       error: () => {
         this.messageService.add({
@@ -112,6 +110,7 @@ export class TrendingMoviesComponent implements OnInit {
           detail: this.TEXT.ERROR_SEARCHING_MOVIES,
         });
         this.loading.set(false);
+        this.isSearching.set(false);
       },
     });
   }
@@ -146,7 +145,6 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({
@@ -169,7 +167,6 @@ export class TrendingMoviesComponent implements OnInit {
             ? this.TEXT.SUCCESS_RATING_REMOVED
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
-        this.cdr.detectChanges();
       },
       error: (): void => {
         this.messageService.add({

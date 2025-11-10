@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
-import { CacheStore, CachePrefix } from '../models/cache.model';
+import { CacheStore, CachePrefix, CacheData } from '../models/cache.model';
+import { APP_CONFIG } from '../constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
-  private readonly CACHE_KEY = 'movie_cache_store';
-  private readonly CLEANUP_INTERVAL_MS = 120000;
+  private readonly CACHE_KEY = APP_CONFIG.cache.storageKey;
+  private readonly CLEANUP_INTERVAL_MS = APP_CONFIG.cache.cleanupIntervalMs;
 
   constructor() {
     this.removeExpired();
@@ -18,14 +19,18 @@ export class CacheService {
   save<T>(key: string, value: T, ttlMinutes: number): void {
     const expiry: number = Date.now() + ttlMinutes * 60 * 1000;
     const cacheStore: CacheStore = this.getCacheStore();
-    cacheStore[key] = { value, expiry };
+    const cacheData: CacheData<T> = {
+      value,
+      expiry,
+    };
+    cacheStore[key] = cacheData;
     this.setCacheStore(cacheStore);
     console.log(`Cache saved: ${key}`);
   }
 
   retrieve<T>(key: string): T | null {
     const cacheStore: CacheStore = this.getCacheStore();
-    const cached = cacheStore[key];
+    const cached: CacheData | undefined = cacheStore[key];
 
     if (!cached) {
       console.log(`Cache miss: ${key}`);
@@ -89,7 +94,7 @@ export class CacheService {
   private removeExpired(): void {
     const now: number = Date.now();
     const cacheStore: CacheStore = this.getCacheStore();
-    let hasExpired = false;
+    let hasExpired: boolean = false;
 
     Object.keys(cacheStore).forEach((key: string): void => {
       if (now > cacheStore[key].expiry) {
