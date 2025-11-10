@@ -12,7 +12,7 @@ import {
   MovieRatingEvent,
   RatedMoviesResponse,
 } from '../shared/models/app.models';
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
@@ -38,6 +38,7 @@ export class RatingsComponent implements OnInit {
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private ratingService: RatingService,

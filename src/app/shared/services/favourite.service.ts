@@ -18,7 +18,7 @@ import {
   AddFavouriteRequest,
   AddFavouriteResponse,
 } from '../models/app.models';
-import { ACCOUNT_ID } from '../constants';
+import { ACCOUNT_ID, APP_CONFIG } from '../constants';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';
 
@@ -26,7 +26,7 @@ import { CachePrefix } from '../models/cache.model';
   providedIn: 'root',
 })
 export class FavouriteService {
-  private readonly CACHE_TTL_MINUTES = 10;
+  private readonly CACHE_TTL_MINUTES = APP_CONFIG.cache.ttl.favouritesMinutes;
   private favouriteMoviesCache: Set<number> = new Set();
 
   constructor(private http: HttpClient, private cacheService: CacheService) {}
@@ -92,7 +92,7 @@ export class FavouriteService {
     this.favouriteMoviesCache.add(movieId);
 
     const request: AddFavouriteRequest = {
-      media_type: 'movie',
+      media_type: APP_CONFIG.api.mediaType,
       media_id: movieId,
       favorite: true,
     };
@@ -117,7 +117,7 @@ export class FavouriteService {
     this.favouriteMoviesCache.delete(movieId);
 
     const request: AddFavouriteRequest = {
-      media_type: 'movie',
+      media_type: APP_CONFIG.api.mediaType,
       media_id: movieId,
       favorite: false,
     };

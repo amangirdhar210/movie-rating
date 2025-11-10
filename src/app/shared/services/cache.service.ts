@@ -1,12 +1,13 @@
 import { Injectable } from '@angular/core';
 import { CacheStore, CachePrefix, CacheData } from '../models/cache.model';
+import { APP_CONFIG } from '../constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
-  private readonly CACHE_KEY = 'movie_cache_store';
-  private readonly CLEANUP_INTERVAL_MS = 120000;
+  private readonly CACHE_KEY = APP_CONFIG.cache.storageKey;
+  private readonly CLEANUP_INTERVAL_MS = APP_CONFIG.cache.cleanupIntervalMs;
 
   constructor() {
     this.removeExpired();

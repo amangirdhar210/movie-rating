@@ -11,7 +11,7 @@ import { MovieService } from '../shared/services/movie.service';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
 import { Movie, MovieRatingEvent } from '../shared/models/app.models';
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
@@ -42,6 +42,7 @@ export class TrendingMoviesComponent implements OnInit {
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private movieService: MovieService,
@@ -51,8 +52,7 @@ export class TrendingMoviesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
-    this.loadRatingsAndFavourites();
-    this.loadTrendingMovies();
+    this.loadTrendingMovies(1);
   }
 
   loadRatingsAndFavourites(): void {
@@ -66,21 +66,23 @@ export class TrendingMoviesComponent implements OnInit {
     this.isSearchMode = false;
     this.searchQuery = '';
 
-    this.movieService.getTrendingMovies('week', page).subscribe({
-      next: (response) => {
-        this.movies = response.results;
-        this.totalResults = response.total_results;
-        this.loading.set(false);
-      },
-      error: () => {
-        this.messageService.add({
-          severity: 'error',
-          summary: this.TEXT.ERROR,
-          detail: this.TEXT.ERROR_LOADING_TRENDING,
-        });
-        this.loading.set(false);
-      },
-    });
+    this.movieService
+      .getTrendingMovies(APP_CONFIG.defaults.trendingTimeWindow, page)
+      .subscribe({
+        next: (response) => {
+          this.movies = response.results;
+          this.totalResults = response.total_results;
+          this.loading.set(false);
+        },
+        error: () => {
+          this.messageService.add({
+            severity: 'error',
+            summary: this.TEXT.ERROR,
+            detail: this.TEXT.ERROR_LOADING_TRENDING,
+          });
+          this.loading.set(false);
+        },
+      });
   }
 
   searchMovies(page: number = 1): void {

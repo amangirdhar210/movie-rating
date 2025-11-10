@@ -4,7 +4,7 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 
-import { APP_TEXT } from '../shared/constants';
+import { APP_TEXT, APP_CONFIG } from '../shared/constants';
 import { RatingService } from '../shared/services/rating.service';
 import { FavouriteService } from '../shared/services/favourite.service';
 import { Movie, MovieRatingEvent } from '../shared/models/app.models';
@@ -33,6 +33,7 @@ export class FavouriteMoviesComponent implements OnInit {
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
   readonly TEXT = APP_TEXT;
+  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
 
   constructor(
     private ratingService: RatingService,

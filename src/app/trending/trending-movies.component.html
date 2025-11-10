@@ -78,7 +78,7 @@
     <div class="pagination-section">
       <app-paginator
         [totalRecords]="totalResults"
-        [rows]="20"
+        [rows]="pageSize"
         [currentPage]="currentPage"
         (pageChange)="onPageChange($event)"
       ></app-paginator>

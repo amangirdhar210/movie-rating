@@ -7,13 +7,16 @@ import { tap } from 'rxjs/operators';
 import { TrendingMoviesResponse } from '../models/app.models';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';
+import { APP_CONFIG } from '../constants';
 
 @Injectable({
   providedIn: 'root',
 })
 export class MovieService {
-  private readonly TRENDING_CACHE_TTL_MINUTES = 5;
-  private readonly SEARCH_CACHE_TTL_MINUTES = 3;
+  private readonly TRENDING_CACHE_TTL_MINUTES =
+    APP_CONFIG.cache.ttl.trendingMinutes;
+  private readonly SEARCH_CACHE_TTL_MINUTES =
+    APP_CONFIG.cache.ttl.searchMinutes;
 
   constructor(private http: HttpClient, private cacheService: CacheService) {}
 

@@ -19,7 +19,7 @@ import {
   AddRatingResponse,
   DeleteRatingResponse,
 } from '../models/app.models';
-import { ACCOUNT_ID } from '../constants';
+import { ACCOUNT_ID, APP_CONFIG } from '../constants';
 import { CacheService } from './cache.service';
 import { CachePrefix } from '../models/cache.model';
 
@@ -27,7 +27,7 @@ import { CachePrefix } from '../models/cache.model';
   providedIn: 'root',
 })
 export class RatingService {
-  private readonly CACHE_TTL_MINUTES = 10;
+  private readonly CACHE_TTL_MINUTES = APP_CONFIG.cache.ttl.ratingsMinutes;
   private ratedMoviesCache: Map<number, number> = new Map();
 
   constructor(private http: HttpClient, private cacheService: CacheService) {}
