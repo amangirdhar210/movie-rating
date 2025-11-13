@@ -17,8 +17,10 @@ import { MovieCardComponent } from '../shared/components/movie-card/movie-card.c
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
 import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 
+type TabType = 'favourites' | 'ratings';
+
 @Component({
-  selector: 'app-ratings',
+  selector: 'app-my-collection',
   imports: [
     MovieCardComponent,
     MovieDetailModalComponent,
@@ -26,10 +28,12 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
     ProgressSpinnerModule,
     PaginatorComponent,
   ],
-  templateUrl: './ratings.component.html',
-  styleUrl: './ratings.component.scss',
+  templateUrl: './my-collection.component.html',
+  styleUrl: './my-collection.component.scss',
 })
-export class RatingsComponent implements OnInit {
+export class MyCollectionComponent implements OnInit {
+  activeTab: WritableSignal<TabType> = signal<TabType>('favourites');
+  favouriteMovies: WritableSignal<Movie[]> = signal<Movie[]>([]);
   ratedMovies: WritableSignal<RatedMovie[]> = signal<RatedMovie[]>([]);
   loading: WritableSignal<boolean> = signal<boolean>(false);
   isDeletingAll: WritableSignal<boolean> = signal<boolean>(false);
@@ -48,11 +52,37 @@ export class RatingsComponent implements OnInit {
 
   ngOnInit(): void {
     this.loadFavourites();
-    this.loadRatedMovies();
   }
 
-  loadFavourites(): void {
-    this.favouriteService.getFavourites().subscribe();
+  switchTab(tab: TabType): void {
+    this.activeTab.set(tab);
+    this.currentPage = 1;
+    if (tab === 'favourites') {
+      this.loadFavourites(1);
+    } else {
+      this.loadRatedMovies(1);
+    }
+  }
+
+  loadFavourites(page: number = 1): void {
+    this.loading.set(true);
+    this.currentPage = page;
+
+    this.favouriteService.getFavourites(page).subscribe({
+      next: (response) => {
+        this.favouriteMovies.set(response.results);
+        this.totalResults = response.total_results;
+        this.loading.set(false);
+      },
+      error: () => {
+        this.messageService.add({
+          severity: 'error',
+          summary: this.TEXT.ERROR,
+          detail: this.TEXT.ERROR_LOADING_FAVOURITES,
+        });
+        this.loading.set(false);
+      },
+    });
   }
 
   loadRatedMovies(page: number = 1): void {
@@ -77,7 +107,11 @@ export class RatingsComponent implements OnInit {
   }
 
   onPageChange(page: number): void {
-    this.loadRatedMovies(page);
+    if (this.activeTab() === 'favourites') {
+      this.loadFavourites(page);
+    } else {
+      this.loadRatedMovies(page);
+    }
   }
 
   onMovieClick(movie: Movie): void {
@@ -86,18 +120,25 @@ export class RatingsComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
+    const isFavourite: boolean = this.favouriteService.isFavourite(movie.id);
+
     this.favouriteService.toggleFavourite(movie.id).subscribe({
       next: (): void => {
-        const isFavourite: boolean = this.favouriteService.isFavourite(
+        const isNowFavourite: boolean = this.favouriteService.isFavourite(
           movie.id
         );
         this.messageService.add({
           severity: 'success',
           summary: this.TEXT.SUCCESS,
-          detail: isFavourite
+          detail: isNowFavourite
             ? this.TEXT.SUCCESS_FAVOURITE_ADDED
             : this.TEXT.SUCCESS_FAVOURITE_REMOVED,
         });
+
+        if (this.activeTab() === 'favourites' && isFavourite) {
+          this.loadFavourites(this.currentPage);
+          this.showModal = false;
+        }
       },
       error: (): void => {
         this.messageService.add({
@@ -122,7 +163,7 @@ export class RatingsComponent implements OnInit {
             : this.TEXT.SUCCESS_RATING_ADDED,
         });
 
-        if (isRemovingRating) {
+        if (this.activeTab() === 'ratings' && isRemovingRating) {
           this.showModal = false;
           this.loadRatedMovies(this.currentPage);
         }
@@ -145,27 +186,76 @@ export class RatingsComponent implements OnInit {
     return this.ratingService.getRating(movieId);
   }
 
-  clearAllRatings(): void {
+  onClearAll(): void {
     this.isDeletingAll.set(true);
 
-    this.ratingService.clearAllRatings().subscribe({
+    const clearObservable =
+      this.activeTab() === 'favourites'
+        ? this.favouriteService.clearAllFavourites()
+        : this.ratingService.clearAllRatings();
+
+    const successMessage =
+      this.activeTab() === 'favourites'
+        ? this.TEXT.SUCCESS_ALL_FAVOURITES_CLEARED
+        : this.TEXT.SUCCESS_ALL_RATINGS_CLEARED;
+
+    const errorMessage =
+      this.activeTab() === 'favourites'
+        ? this.TEXT.ERROR_CLEAR_FAVOURITES
+        : this.TEXT.ERROR_CLEAR_RATINGS;
+
+    clearObservable.subscribe({
       next: (): void => {
         this.messageService.add({
           severity: 'success',
           summary: this.TEXT.SUCCESS,
-          detail: this.TEXT.SUCCESS_ALL_RATINGS_CLEARED,
+          detail: successMessage,
         });
-        this.loadRatedMovies(1);
+
+        if (this.activeTab() === 'favourites') {
+          this.loadFavourites(1);
+        } else {
+          this.loadRatedMovies(1);
+        }
+
         this.isDeletingAll.set(false);
       },
       error: (): void => {
         this.messageService.add({
           severity: 'error',
           summary: this.TEXT.ERROR,
-          detail: this.TEXT.ERROR_CLEAR_RATINGS,
+          detail: errorMessage,
         });
         this.isDeletingAll.set(false);
       },
     });
+  }
+
+  get currentMovies(): Movie[] {
+    return this.activeTab() === 'favourites'
+      ? this.favouriteMovies()
+      : this.ratedMovies();
+  }
+
+  get emptyStateIcon(): string {
+    return this.activeTab() === 'favourites' ? 'pi-heart' : 'pi-star';
+  }
+
+  get emptyStateTitle(): string {
+    return this.activeTab() === 'favourites'
+      ? this.TEXT.NO_FAVOURITE_MOVIES
+      : this.TEXT.NO_RATINGS_YET;
+  }
+
+  get emptyStateSubtitle(): string {
+    return this.activeTab() === 'favourites'
+      ? this.TEXT.NO_FAVOURITES_SUBTITLE
+      : this.TEXT.NO_RATINGS_SUBTITLE;
+  }
+
+  get clearAllButtonLabel(): string {
+    return this.activeTab() === 'favourites'
+      ? this.TEXT.CLEAR_ALL_FAVOURITES
+      : this.TEXT.CLEAR_ALL_RATINGS;
   }
 }

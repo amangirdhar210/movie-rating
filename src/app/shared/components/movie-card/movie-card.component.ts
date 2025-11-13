@@ -16,6 +16,8 @@ export class MovieCardComponent {
   @Input({ required: true }) movie!: Movie;
   @Input() isFavourite = false;
   @Input() userRating: number = 0;
+  @Input() showFavouriteBadge = true;
+  @Input() showRatingBadge = true;
   @Output() movieClick = new EventEmitter<Movie>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;

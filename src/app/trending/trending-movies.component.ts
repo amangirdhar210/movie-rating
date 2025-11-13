@@ -55,11 +55,6 @@ export class TrendingMoviesComponent implements OnInit {
     this.loadTrendingMovies(1);
   }
 
-  loadRatingsAndFavourites(): void {
-    this.ratingService.getRatedMovies().subscribe();
-    this.favouriteService.getFavourites().subscribe();
-  }
-
   loadTrendingMovies(page: number = 1): void {
     this.loading.set(true);
     this.currentPage = page;

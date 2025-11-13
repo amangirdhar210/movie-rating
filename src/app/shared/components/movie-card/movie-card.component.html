@@ -34,11 +34,11 @@
   </div>
 
   <div class="card-badges">
-    @if (isFavourite) {
+    @if (isFavourite && showFavouriteBadge) {
     <span class="badge favourite-badge">
       <i class="pi pi-heart-fill"></i>
     </span>
-    } @if (userRating > 0) {
+    } @if (userRating > 0 && showRatingBadge) {
     <span class="badge rating-badge">
       <i class="pi pi-star-fill"></i>
       {{ userRating }}

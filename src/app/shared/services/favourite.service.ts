@@ -7,7 +7,6 @@ import {
   forkJoin,
   of,
   tap,
-  switchMap,
   catchError,
   throwError,
 } from 'rxjs';
@@ -87,7 +86,7 @@ export class FavouriteService {
     return this.favouriteMoviesCache.has(movieId);
   }
 
-  addToFavourites(movieId: number): Observable<AddFavouriteResponse> {
+  private addToFavourites(movieId: number): Observable<AddFavouriteResponse> {
     const wasAlreadyFavourite: boolean = this.favouriteMoviesCache.has(movieId);
     this.favouriteMoviesCache.add(movieId);
 
@@ -112,7 +111,9 @@ export class FavouriteService {
       );
   }
 
-  removeFromFavourites(movieId: number): Observable<AddFavouriteResponse> {
+  private removeFromFavourites(
+    movieId: number
+  ): Observable<AddFavouriteResponse> {
     const wasAlreadyFavourite: boolean = this.favouriteMoviesCache.has(movieId);
     this.favouriteMoviesCache.delete(movieId);
 
@@ -146,43 +147,18 @@ export class FavouriteService {
   }
 
   clearAllFavourites(): Observable<AddFavouriteResponse[]> {
-    return this.getFavourites(1).pipe(
-      switchMap((firstPage: FavouriteMoviesResponse): Observable<number[]> => {
-        const totalPages: number = firstPage.total_pages;
+    const movieIds: number[] = Array.from(this.favouriteMoviesCache);
 
-        if (totalPages === 0) {
-          return of([]);
-        }
+    if (movieIds.length === 0) {
+      return of([]);
+    }
 
-        const pageRequests: Observable<FavouriteMoviesResponse>[] = [];
-        for (let page = 1; page <= totalPages; page++) {
-          pageRequests.push(this.getFavourites(page));
-        }
+    const removeRequests: Observable<AddFavouriteResponse>[] = movieIds.map(
+      (movieId: number): Observable<AddFavouriteResponse> =>
+        this.removeFromFavourites(movieId)
+    );
 
-        return forkJoin(pageRequests).pipe(
-          map((allPages: FavouriteMoviesResponse[]): number[] => {
-            const allMovieIds: number[] = [];
-            allPages.forEach((pageResponse: FavouriteMoviesResponse): void => {
-              pageResponse.results.forEach((movie: Movie): void => {
-                allMovieIds.push(movie.id);
-              });
-            });
-            return allMovieIds;
-          })
-        );
-      }),
-      switchMap((movieIds: number[]): Observable<AddFavouriteResponse[]> => {
-        if (movieIds.length === 0) {
-          return of([]);
-        }
-
-        const removeRequests: Observable<AddFavouriteResponse>[] = movieIds.map(
-          (movieId: number): Observable<AddFavouriteResponse> =>
-            this.removeFromFavourites(movieId)
-        );
-
-        return forkJoin(removeRequests);
-      }),
+    return forkJoin(removeRequests).pipe(
       tap((): void => {
         this.invalidateFavouritesCache();
       })

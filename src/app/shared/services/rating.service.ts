@@ -7,7 +7,6 @@ import {
   forkJoin,
   of,
   tap,
-  switchMap,
   catchError,
   throwError,
 } from 'rxjs';
@@ -103,7 +102,7 @@ export class RatingService {
     const previousRating: number = this.ratedMoviesCache.get(movieId) || 0;
     this.ratedMoviesCache.set(movieId, rating);
 
-    const request: AddRatingRequest = this.createRatingRequest(rating);
+    const request: AddRatingRequest = { value: rating };
 
     return this.http
       .post<AddRatingResponse>(`/movie/${movieId}/rating`, request)
@@ -120,13 +119,6 @@ export class RatingService {
           return throwError(() => error);
         })
       );
-  }
-
-  private createRatingRequest(rating: number): AddRatingRequest {
-    const request: AddRatingRequest = {
-      value: rating,
-    };
-    return request;
   }
 
   removeRating(movieId: number): Observable<DeleteRatingResponse> {
@@ -149,43 +141,18 @@ export class RatingService {
   }
 
   clearAllRatings(): Observable<DeleteRatingResponse[]> {
-    return this.getRatedMovies(1).pipe(
-      switchMap((firstPage: RatedMoviesResponse): Observable<number[]> => {
-        const totalPages: number = firstPage.total_pages;
+    const movieIds: number[] = Array.from(this.ratedMoviesCache.keys());
 
-        if (totalPages === 0) {
-          return of([]);
-        }
+    if (movieIds.length === 0) {
+      return of([]);
+    }
 
-        const pageRequests: Observable<RatedMoviesResponse>[] = [];
-        for (let page = 1; page <= totalPages; page++) {
-          pageRequests.push(this.getRatedMovies(page));
-        }
+    const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
+      (movieId: number): Observable<DeleteRatingResponse> =>
+        this.removeRating(movieId)
+    );
 
-        return forkJoin(pageRequests).pipe(
-          map((allPages: RatedMoviesResponse[]): number[] => {
-            const allMovieIds: number[] = [];
-            allPages.forEach((pageResponse: RatedMoviesResponse): void => {
-              pageResponse.results.forEach((movie: RatedMovie): void => {
-                allMovieIds.push(movie.id);
-              });
-            });
-            return allMovieIds;
-          })
-        );
-      }),
-      switchMap((movieIds: number[]): Observable<DeleteRatingResponse[]> => {
-        if (movieIds.length === 0) {
-          return of([]);
-        }
-
-        const deleteRequests: Observable<DeleteRatingResponse>[] = movieIds.map(
-          (movieId: number): Observable<DeleteRatingResponse> =>
-            this.removeRating(movieId)
-        );
-
-        return forkJoin(deleteRequests);
-      }),
+    return forkJoin(deleteRequests).pipe(
       tap((): void => {
         this.invalidateRatingsCache();
       })

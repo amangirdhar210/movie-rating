@@ -15,10 +15,12 @@ export const APP_TEXT = {
   SEARCH_RESULTS: 'Search Results',
   MY_FAVOURITE_MOVIES: 'My Favourite Movies',
   MY_RATINGS: 'My Ratings',
+  MY_COLLECTION: 'My Collection',
 
   TRENDING: 'Trending',
   FAVOURITES: 'Favourites',
   MY_RATINGS_NAV: 'My Ratings',
+  MY_COLLECTION_NAV: 'My Collection',
 
   SEARCH_PLACEHOLDER: 'Search for movies...',
   SEARCH: 'Search',

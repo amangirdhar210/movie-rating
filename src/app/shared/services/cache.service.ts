@@ -48,15 +48,6 @@ export class CacheService {
     return cached.value as T;
   }
 
-  invalidate(key: string): void {
-    const cacheStore: CacheStore = this.getCacheStore();
-    if (cacheStore[key]) {
-      delete cacheStore[key];
-      this.setCacheStore(cacheStore);
-      console.log(`Cache invalidated: ${key}`);
-    }
-  }
-
   invalidateByPrefix(prefix: CachePrefix): void {
     const cacheStore: CacheStore = this.getCacheStore();
     const keysToDelete: string[] = Object.keys(cacheStore).filter(

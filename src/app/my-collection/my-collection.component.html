@@ -1,13 +1,13 @@
-<div class="ratings-container">
+<div class="my-collection-container">
   <div class="header">
-    <h2 class="title">{{ TEXT.MY_RATINGS }}</h2>
-    @if (ratedMovies().length > 0 && !loading()) {
+    <h2 class="title">{{ TEXT.MY_COLLECTION }}</h2>
+    @if (currentMovies.length > 0 && !loading()) {
     <button
       pButton
-      class="p-button-danger"
-      [label]="TEXT.CLEAR_ALL_RATINGS"
+      severity="danger"
+      [label]="clearAllButtonLabel"
       [disabled]="isDeletingAll()"
-      (click)="clearAllRatings()"
+      (click)="onClearAll()"
     >
       @if (isDeletingAll()) {
       <i class="pi pi-spin pi-spinner"></i>
@@ -18,26 +18,45 @@
     }
   </div>
 
+  <div class="pill-tabs">
+    <button
+      class="pill-tab"
+      [class.active]="activeTab() === 'favourites'"
+      (click)="switchTab('favourites')"
+    >
+      <i class="pi pi-heart"></i>
+      <span>{{ TEXT.FAVOURITES }}</span>
+    </button>
+    <button
+      class="pill-tab"
+      [class.active]="activeTab() === 'ratings'"
+      (click)="switchTab('ratings')"
+    >
+      <i class="pi pi-star"></i>
+      <span>{{ TEXT.MY_RATINGS_NAV }}</span>
+    </button>
+  </div>
+
   @if (loading()) {
   <div class="loading-container">
     <p-progressSpinner></p-progressSpinner>
   </div>
-  } @else if (ratedMovies().length === 0) {
+  } @else if (currentMovies.length === 0) {
   <div class="empty-state">
-    <i class="pi pi-star empty-icon"></i>
-    <h3 class="empty-title">{{ TEXT.NO_RATINGS_YET }}</h3>
-    <p class="empty-text">
-      {{ TEXT.NO_RATINGS_SUBTITLE }}
-    </p>
+    <i class="pi {{ emptyStateIcon }} empty-icon"></i>
+    <h3 class="empty-title">{{ emptyStateTitle }}</h3>
+    <p class="empty-text">{{ emptyStateSubtitle }}</p>
   </div>
   } @else {
   <div class="content-section">
     <div class="movies-grid">
-      @for (movie of ratedMovies(); track movie.id) {
+      @for (movie of currentMovies; track movie.id) {
       <app-movie-card
         [movie]="movie"
         [isFavourite]="isFavourite(movie.id)"
         [userRating]="getUserRating(movie.id)"
+        [showFavouriteBadge]="activeTab() === 'favourites'"
+        [showRatingBadge]="activeTab() === 'ratings'"
         (movieClick)="onMovieClick($event)"
       ></app-movie-card>
       }

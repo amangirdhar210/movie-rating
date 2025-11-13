@@ -1,6 +1,6 @@
 @use "../shared/styles/theme-variables" as theme;
 
-.ratings-container {
+.my-collection-container {
   max-width: 1920px;
   margin: 0 auto;
   padding: 1.5rem;
@@ -14,13 +14,13 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
 
   @media (max-width: 768px) {
     flex-direction: column;
     align-items: flex-start;
     gap: 0.75rem;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
 
   .title {
@@ -31,6 +31,64 @@
 
     @media (max-width: 768px) {
       font-size: 1.5rem;
+    }
+  }
+}
+
+.pill-tabs {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 0.25rem;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: 50px;
+  width: fit-content;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pill-tab {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 50px;
+    background-color: transparent;
+    color: theme.$text-secondary;
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+
+    @media (max-width: 768px) {
+      flex: 1;
+      justify-content: center;
+      padding: 0.625rem 1rem;
+      font-size: 0.95rem;
+    }
+
+    i {
+      font-size: 1.1rem;
+
+      @media (max-width: 768px) {
+        font-size: 1rem;
+      }
+    }
+
+    &:hover:not(.active) {
+      background-color: rgba(255, 255, 255, 0.08);
+      color: theme.$text-primary;
+    }
+
+    &.active {
+      background-color: theme.$primary-color;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(229, 9, 20, 0.3);
     }
   }
 }
