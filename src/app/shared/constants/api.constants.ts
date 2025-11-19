@@ -1,14 +1,12 @@
 import { environment } from '../environments/environment';
-import { APP_CONFIG } from './app.config';
+import { API_CONFIG, MEDIA_CONFIG } from './app.config';
 
-export const BASE_API_URL = APP_CONFIG.api.baseUrl;
+export const BASE_API_URL = API_CONFIG.baseUrl;
 
-export const IMAGE_BASE_URL = APP_CONFIG.media.imageBaseUrl;
+export const IMAGE_BASE_URL = MEDIA_CONFIG.imageBaseUrl;
 
-export const DEFAULT_POSTER_PATH = APP_CONFIG.media.defaultPosterPath;
-
-export const API_KEY = environment.movieApiKey;
+export const DEFAULT_POSTER_PATH = MEDIA_CONFIG.defaultPosterPath;
 
 export const API_READ_ACCESS_TOKEN = environment.movieApiAccssToken;
 
-export const ACCOUNT_ID = APP_CONFIG.api.accountId;
+export const ACCOUNT_ID = API_CONFIG.accountId;

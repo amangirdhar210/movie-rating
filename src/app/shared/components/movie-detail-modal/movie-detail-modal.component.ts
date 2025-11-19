@@ -1,4 +1,10 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  ViewEncapsulation,
+} from '@angular/core';
 import { DecimalPipe, UpperCasePipe } from '@angular/common';
 
 import { DialogModule } from 'primeng/dialog';
@@ -8,7 +14,11 @@ import { FormsModule } from '@angular/forms';
 import { TagModule } from 'primeng/tag';
 
 import { Movie, MovieRatingEvent } from '../../models/app.models';
-import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
+import {
+  IMAGE_BASE_URL,
+  DEFAULT_POSTER_PATH,
+} from '../../constants/api.constants';
+import { COMMON_TEXT, MOVIE_DETAIL_TEXT } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-movie-detail-modal',
@@ -23,6 +33,7 @@ import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
   ],
   templateUrl: './movie-detail-modal.component.html',
   styleUrl: './movie-detail-modal.component.scss',
+  encapsulation: ViewEncapsulation.None,
 })
 export class MovieDetailModalComponent {
   @Input() visible = false;
@@ -34,7 +45,8 @@ export class MovieDetailModalComponent {
   @Output() rateMovie = new EventEmitter<MovieRatingEvent>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
-  readonly TEXT = APP_TEXT;
+  readonly COMMON_TEXT = COMMON_TEXT;
+  readonly TEXT = MOVIE_DETAIL_TEXT;
 
   get backdropUrl(): string {
     if (this.movie?.backdrop_path) {

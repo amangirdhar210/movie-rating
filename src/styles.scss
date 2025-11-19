@@ -46,56 +46,31 @@ body {
   }
 }
 
-::ng-deep {
-  .p-button {
-    font-weight: 500;
-    border-radius: 6px;
-    padding: 0.65rem 1.25rem;
-    transition: background 0.2s ease;
+.p-button {
+  font-weight: 500;
+  border-radius: 6px;
+  padding: 0.65rem 1.25rem;
+  transition: background 0.2s ease;
+}
+
+.p-inputtext {
+  font-size: 0.95rem;
+  transition: border 0.2s ease;
+}
+
+.p-progressspinner {
+  .p-progress-spinner-circle {
+    stroke: theme.$primary-color;
   }
+}
 
-  .p-inputtext {
-    font-size: 0.95rem;
-    transition: border 0.2s ease;
-  }
+.p-paginator {
+  background: transparent !important;
+  border: none !important;
+  padding: 1.2rem 0 !important;
 
-  .p-progressspinner {
-    .p-progress-spinner-circle {
-      stroke: theme.$primary-color;
-    }
-  }
-
-  .p-paginator {
-    background: transparent !important;
-    border: none !important;
-    padding: 1.2rem 0 !important;
-
-    .p-paginator-pages {
-      .p-paginator-page {
-        min-width: 2.25rem;
-        height: 2.25rem;
-        border-radius: 6px;
-        color: theme.$text-secondary;
-        border: 1px solid theme.$border-primary;
-        transition: background 0.2s ease;
-
-        &:hover {
-          background: theme.$hover-overlay;
-          color: theme.$text-primary;
-        }
-
-        &.p-highlight {
-          background: theme.$primary-color;
-          color: theme.$text-primary;
-          border-color: theme.$primary-color;
-        }
-      }
-    }
-
-    .p-paginator-first,
-    .p-paginator-prev,
-    .p-paginator-next,
-    .p-paginator-last {
+  .p-paginator-pages {
+    .p-paginator-page {
       min-width: 2.25rem;
       height: 2.25rem;
       border-radius: 6px;
@@ -103,46 +78,69 @@ body {
       border: 1px solid theme.$border-primary;
       transition: background 0.2s ease;
 
-      &:hover:not(:disabled) {
+      &:hover {
         background: theme.$hover-overlay;
         color: theme.$text-primary;
       }
-    }
 
-    .p-paginator-current {
-      color: theme.$text-secondary;
-      font-size: 0.9rem;
+      &.p-highlight {
+        background: theme.$primary-color;
+        color: theme.$text-primary;
+        border-color: theme.$primary-color;
+      }
     }
   }
 
-  .p-dialog {
-    border-radius: 8px;
-    overflow: hidden;
-    box-shadow: theme.$shadow-xl;
+  .p-paginator-first,
+  .p-paginator-prev,
+  .p-paginator-next,
+  .p-paginator-last {
+    min-width: 2.25rem;
+    height: 2.25rem;
+    border-radius: 6px;
+    color: theme.$text-secondary;
+    border: 1px solid theme.$border-primary;
+    transition: background 0.2s ease;
 
-    .p-dialog-header {
-      background: theme.$bg-surface;
-      border-bottom: 1px solid theme.$border-primary-light;
-      padding: 1rem;
+    &:hover:not(:disabled) {
+      background: theme.$hover-overlay;
+      color: theme.$text-primary;
+    }
+  }
 
-      .p-dialog-title {
-        color: theme.$text-primary;
-        font-weight: 600;
-      }
+  .p-paginator-current {
+    color: theme.$text-secondary;
+    font-size: 0.9rem;
+  }
+}
 
-      .p-dialog-header-icon {
-        color: theme.$text-secondary;
+.p-dialog {
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: theme.$shadow-xl;
 
-        &:hover {
-          color: theme.$text-primary;
-          background: theme.$hover-overlay;
-        }
-      }
+  .p-dialog-header {
+    background: theme.$bg-surface;
+    border-bottom: 1px solid theme.$border-primary-light;
+    padding: 1rem;
+
+    .p-dialog-title {
+      color: theme.$text-primary;
+      font-weight: 600;
     }
 
-    .p-dialog-content {
-      background: theme.$bg-surface;
+    .p-dialog-header-icon {
       color: theme.$text-secondary;
+
+      &:hover {
+        color: theme.$text-primary;
+        background: theme.$hover-overlay;
+      }
     }
+  }
+
+  .p-dialog-content {
+    background: theme.$bg-surface;
+    color: theme.$text-secondary;
   }
 }

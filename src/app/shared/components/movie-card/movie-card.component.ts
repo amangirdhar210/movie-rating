@@ -4,7 +4,11 @@ import { DecimalPipe, UpperCasePipe } from '@angular/common';
 import { CardModule } from 'primeng/card';
 
 import { Movie } from '../../models/app.models';
-import { IMAGE_BASE_URL, APP_TEXT, DEFAULT_POSTER_PATH } from '../../constants';
+import {
+  IMAGE_BASE_URL,
+  DEFAULT_POSTER_PATH,
+} from '../../constants/api.constants';
+import { COMMON_TEXT } from '../../constants/app.constants';
 
 @Component({
   selector: 'app-movie-card',
@@ -21,7 +25,7 @@ export class MovieCardComponent {
   @Output() movieClick = new EventEmitter<Movie>();
 
   readonly imgBaseUrl = IMAGE_BASE_URL;
-  readonly TEXT = APP_TEXT;
+  readonly TEXT = COMMON_TEXT;
 
   get poster(): string {
     return this.movie.poster_path

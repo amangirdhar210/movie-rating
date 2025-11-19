@@ -57,7 +57,7 @@
           <div class="overview-section">
             <h3 class="section-title">{{ TEXT.OVERVIEW }}</h3>
             <p class="overview-text">
-              {{ movie.overview || TEXT.NO_OVERVIEW }}
+              {{ movie.overview || COMMON_TEXT.NO_OVERVIEW }}
             </p>
           </div>
 
@@ -71,7 +71,7 @@
             <div class="stat-item">
               <span class="stat-label">{{ TEXT.ADULT_CONTENT }}</span>
               <span class="stat-value">{{
-                movie.adult ? TEXT.YES : TEXT.NO
+                movie.adult ? COMMON_TEXT.YES : COMMON_TEXT.NO
               }}</span>
             </div>
           </div>

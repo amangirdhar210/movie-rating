@@ -11,6 +11,4 @@ import { NavbarComponent } from './shared/components/navbar/navbar.component';
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
 })
-export class AppComponent {
-  title: string = 'movie-rating';
-}
+export class AppComponent {}

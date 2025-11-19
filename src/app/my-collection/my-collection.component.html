@@ -63,12 +63,14 @@
     </div>
 
     <div class="pagination-section">
-      <app-paginator
-        [totalRecords]="totalResults"
+      <p-paginator
+        currentPageReportTemplate="Showing {first} to {last} of {totalRecords} movies"
+        [first]="(currentPage - 1) * pageSize"
         [rows]="pageSize"
-        [currentPage]="currentPage"
-        (pageChange)="onPageChange($event)"
-      ></app-paginator>
+        [totalRecords]="totalResults"
+        [showCurrentPageReport]="true"
+        (onPageChange)="onPageChange($event)"
+      ></p-paginator>
     </div>
   </div>
   }

@@ -23,12 +23,6 @@ export interface TrendingMoviesResponse {
   total_results: number;
 }
 
-export interface MovieRating {
-  movieId: number;
-  rating: number;
-  movie: Movie;
-}
-
 export interface RatedMovie extends Movie {
   rating?: number;
   userRating: number;
@@ -92,7 +86,7 @@ export interface PrimeNGThemeOptions {
 }
 
 export interface PrimeNGTheme {
-  preset: any;
+  preset: Record<string, unknown>;
   options: PrimeNGThemeOptions;
 }
 

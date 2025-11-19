@@ -1,13 +1,18 @@
 import { Injectable } from '@angular/core';
-import { CacheStore, CachePrefix, CacheData } from '../models/cache.model';
-import { APP_CONFIG } from '../constants';
+import {
+  CacheStore,
+  CachePrefix,
+  CacheData,
+  CacheableResponse,
+} from '../models/cache.model';
+import { CACHE_CONFIG } from '../constants/app.config';
 
 @Injectable({
   providedIn: 'root',
 })
 export class CacheService {
-  private readonly CACHE_KEY = APP_CONFIG.cache.storageKey;
-  private readonly CLEANUP_INTERVAL_MS = APP_CONFIG.cache.cleanupIntervalMs;
+  private readonly CACHE_KEY = CACHE_CONFIG.storageKey;
+  private readonly CLEANUP_INTERVAL_MS = CACHE_CONFIG.cleanupIntervalMs;
 
   constructor() {
     this.removeExpired();
@@ -16,35 +21,35 @@ export class CacheService {
     }, this.CLEANUP_INTERVAL_MS);
   }
 
-  save<T>(key: string, value: T, ttlMinutes: number): void {
+  save<T extends CacheableResponse>(
+    key: string,
+    value: T,
+    ttlMinutes: number
+  ): void {
     const expiry: number = Date.now() + ttlMinutes * 60 * 1000;
     const cacheStore: CacheStore = this.getCacheStore();
     const cacheData: CacheData<T> = {
       value,
       expiry,
     };
-    cacheStore[key] = cacheData;
+    cacheStore[key] = cacheData as CacheData<CacheableResponse>;
     this.setCacheStore(cacheStore);
-    console.log(`Cache saved: ${key}`);
   }
 
-  retrieve<T>(key: string): T | null {
+  retrieve<T extends CacheableResponse>(key: string): T | null {
     const cacheStore: CacheStore = this.getCacheStore();
     const cached: CacheData | undefined = cacheStore[key];
 
     if (!cached) {
-      console.log(`Cache miss: ${key}`);
       return null;
     }
 
     if (Date.now() > cached.expiry) {
       delete cacheStore[key];
       this.setCacheStore(cacheStore);
-      console.log(`Cache expired: ${key}`);
       return null;
     }
 
-    console.log(`Cache hit: ${key}`);
     return cached.value as T;
   }
 
@@ -59,15 +64,11 @@ export class CacheService {
         delete cacheStore[key];
       });
       this.setCacheStore(cacheStore);
-      console.log(
-        `Cache invalidated for prefix: ${prefix}, keys: ${keysToDelete.length}`
-      );
     }
   }
 
   clearAll(): void {
     localStorage.removeItem(this.CACHE_KEY);
-    console.log('All cache cleared');
   }
 
   private getCacheStore(): CacheStore {
@@ -96,7 +97,6 @@ export class CacheService {
 
     if (hasExpired) {
       this.setCacheStore(cacheStore);
-      console.log('Expired cache entries removed');
     }
   }
 }

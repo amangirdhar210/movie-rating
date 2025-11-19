@@ -6,15 +6,23 @@ import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { TooltipModule } from 'primeng/tooltip';
 import { MessageService } from 'primeng/api';
+import { PaginatorModule } from 'primeng/paginator';
 
-import { MovieService } from '../shared/services/movie.service';
-import { RatingService } from '../shared/services/rating.service';
-import { FavouriteService } from '../shared/services/favourite.service';
+import { MovieDataService } from '../shared/services/movie-data.service';
 import { Movie, MovieRatingEvent } from '../shared/models/app.models';
-import { APP_TEXT, APP_CONFIG } from '../shared/constants';
+import {
+  PAGE_TITLE_TEXT,
+  SEARCH_TEXT,
+  EMPTY_STATE_TEXT,
+  ERROR_TEXT,
+  SUCCESS_TEXT,
+} from '../shared/constants/app.constants';
+import {
+  PAGINATION_CONFIG,
+  DEFAULT_CONFIG,
+} from '../shared/constants/app.config';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 
 @Component({
   selector: 'app-trending-movies',
@@ -22,7 +30,7 @@ import { PaginatorComponent } from '../shared/components/paginator/paginator.com
     FormsModule,
     MovieCardComponent,
     MovieDetailModalComponent,
-    PaginatorComponent,
+    PaginatorModule,
     InputTextModule,
     ButtonModule,
     ProgressSpinnerModule,
@@ -41,13 +49,17 @@ export class TrendingMoviesComponent implements OnInit {
   isSearchMode: boolean = false;
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
-  readonly TEXT = APP_TEXT;
-  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
+  readonly TEXT = {
+    ...PAGE_TITLE_TEXT,
+    ...SEARCH_TEXT,
+    ...EMPTY_STATE_TEXT,
+    ...ERROR_TEXT,
+    ...SUCCESS_TEXT,
+  };
+  readonly pageSize = PAGINATION_CONFIG.defaultPageSize;
 
   constructor(
-    private movieService: MovieService,
-    private ratingService: RatingService,
-    private favouriteService: FavouriteService,
+    private movieDataService: MovieDataService,
     private messageService: MessageService
   ) {}
 
@@ -61,15 +73,15 @@ export class TrendingMoviesComponent implements OnInit {
     this.isSearchMode = false;
     this.searchQuery = '';
 
-    this.movieService
-      .getTrendingMovies(APP_CONFIG.defaults.trendingTimeWindow, page)
+    this.movieDataService
+      .getTrendingMovies(DEFAULT_CONFIG.trendingTimeWindow, page)
       .subscribe({
-        next: (response) => {
+        next: (response): void => {
           this.movies = response.results;
           this.totalResults = response.total_results;
           this.loading.set(false);
         },
-        error: () => {
+        error: (): void => {
           this.messageService.add({
             severity: 'error',
             summary: this.TEXT.ERROR,
@@ -91,14 +103,14 @@ export class TrendingMoviesComponent implements OnInit {
     this.currentPage = page;
     this.isSearchMode = true;
 
-    this.movieService.searchMovies(this.searchQuery, page).subscribe({
-      next: (response) => {
+    this.movieDataService.searchMovies(this.searchQuery, page).subscribe({
+      next: (response): void => {
         this.movies = response.results;
         this.totalResults = response.total_results;
         this.loading.set(false);
         this.isSearching.set(false);
       },
-      error: () => {
+      error: (): void => {
         this.messageService.add({
           severity: 'error',
           summary: this.TEXT.ERROR,
@@ -114,7 +126,8 @@ export class TrendingMoviesComponent implements OnInit {
     this.searchMovies(1);
   }
 
-  onPageChange(page: number): void {
+  onPageChange(event: { page?: number }): void {
+    const page = event.page !== undefined ? event.page + 1 : 1;
     if (this.isSearchMode) {
       this.searchMovies(page);
     } else {
@@ -128,9 +141,9 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    this.favouriteService.toggleFavourite(movie.id).subscribe({
+    this.movieDataService.toggleFavourite(movie.id).subscribe({
       next: (): void => {
-        const isFavourite: boolean = this.favouriteService.isFavourite(
+        const isFavourite: boolean = this.movieDataService.isFavourite(
           movie.id
         );
         this.messageService.add({
@@ -153,7 +166,7 @@ export class TrendingMoviesComponent implements OnInit {
 
   onRateMovie(event: MovieRatingEvent): void {
     const isRatingRemoved: boolean = event.rating === 0;
-    this.ratingService.setRating(event.movie.id, event.rating).subscribe({
+    this.movieDataService.setRating(event.movie.id, event.rating).subscribe({
       next: (): void => {
         this.messageService.add({
           severity: 'success',
@@ -174,15 +187,15 @@ export class TrendingMoviesComponent implements OnInit {
   }
 
   isFavourite(movieId: number): boolean {
-    return this.favouriteService.isFavourite(movieId);
+    return this.movieDataService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {
-    return this.ratingService.getRating(movieId);
+    return this.movieDataService.getRating(movieId);
   }
 
   clearCacheAndReload(): void {
-    this.movieService.clearCache();
+    this.movieDataService.clearCache();
     this.messageService.add({
       severity: 'success',
       summary: 'Cache Cleared',

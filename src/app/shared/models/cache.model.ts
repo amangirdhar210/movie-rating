@@ -4,15 +4,18 @@ import {
   FavouriteMoviesResponse,
 } from './app.models';
 
-export interface CacheData<
-  T = TrendingMoviesResponse | RatedMoviesResponse | FavouriteMoviesResponse
-> {
+export type CacheableResponse =
+  | TrendingMoviesResponse
+  | RatedMoviesResponse
+  | FavouriteMoviesResponse;
+
+export interface CacheData<T = CacheableResponse> {
   value: T;
   expiry: number;
 }
 
 export interface CacheStore {
-  [key: string]: CacheData<any>;
+  [key: string]: CacheData<CacheableResponse>;
 }
 
 export enum CachePrefix {
@@ -20,9 +23,4 @@ export enum CachePrefix {
   SEARCH = 'search',
   RATINGS = 'ratings',
   FAVOURITES = 'favourites',
-}
-
-export interface CacheConfig {
-  ttlMinutes: number;
-  prefix: CachePrefix;
 }

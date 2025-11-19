@@ -3,19 +3,26 @@ import { Component, OnInit, signal, WritableSignal } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
+import { PaginatorModule } from 'primeng/paginator';
 
-import { RatingService } from '../shared/services/rating.service';
-import { FavouriteService } from '../shared/services/favourite.service';
+import { MovieDataService } from '../shared/services/movie-data.service';
 import {
   Movie,
   RatedMovie,
   MovieRatingEvent,
   RatedMoviesResponse,
 } from '../shared/models/app.models';
-import { APP_TEXT, APP_CONFIG } from '../shared/constants';
+import {
+  PAGE_TITLE_TEXT,
+  NAV_TEXT,
+  ACTION_TEXT,
+  EMPTY_STATE_TEXT,
+  ERROR_TEXT,
+  SUCCESS_TEXT,
+} from '../shared/constants/app.constants';
+import { PAGINATION_CONFIG } from '../shared/constants/app.config';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-import { PaginatorComponent } from '../shared/components/paginator/paginator.component';
 
 type TabType = 'favourites' | 'ratings';
 
@@ -26,7 +33,7 @@ type TabType = 'favourites' | 'ratings';
     MovieDetailModalComponent,
     ButtonModule,
     ProgressSpinnerModule,
-    PaginatorComponent,
+    PaginatorModule,
   ],
   templateUrl: './my-collection.component.html',
   styleUrl: './my-collection.component.scss',
@@ -41,12 +48,18 @@ export class MyCollectionComponent implements OnInit {
   totalResults: number = 0;
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
-  readonly TEXT = APP_TEXT;
-  readonly pageSize = APP_CONFIG.pagination.defaultPageSize;
+  readonly TEXT = {
+    ...PAGE_TITLE_TEXT,
+    ...NAV_TEXT,
+    ...ACTION_TEXT,
+    ...EMPTY_STATE_TEXT,
+    ...ERROR_TEXT,
+    ...SUCCESS_TEXT,
+  };
+  readonly pageSize = PAGINATION_CONFIG.defaultPageSize;
 
   constructor(
-    private ratingService: RatingService,
-    private favouriteService: FavouriteService,
+    private movieDataService: MovieDataService,
     private messageService: MessageService
   ) {}
 
@@ -68,13 +81,13 @@ export class MyCollectionComponent implements OnInit {
     this.loading.set(true);
     this.currentPage = page;
 
-    this.favouriteService.getFavourites(page).subscribe({
-      next: (response) => {
+    this.movieDataService.getFavourites(page).subscribe({
+      next: (response): void => {
         this.favouriteMovies.set(response.results);
         this.totalResults = response.total_results;
         this.loading.set(false);
       },
-      error: () => {
+      error: (): void => {
         this.messageService.add({
           severity: 'error',
           summary: this.TEXT.ERROR,
@@ -89,7 +102,7 @@ export class MyCollectionComponent implements OnInit {
     this.loading.set(true);
     this.currentPage = page;
 
-    this.ratingService.getRatedMovies(page).subscribe({
+    this.movieDataService.getRatedMovies(page).subscribe({
       next: (response: RatedMoviesResponse): void => {
         this.ratedMovies.set(response.results);
         this.totalResults = response.total_results;
@@ -106,7 +119,8 @@ export class MyCollectionComponent implements OnInit {
     });
   }
 
-  onPageChange(page: number): void {
+  onPageChange(event: { page?: number }): void {
+    const page = event.page !== undefined ? event.page + 1 : 1;
     if (this.activeTab() === 'favourites') {
       this.loadFavourites(page);
     } else {
@@ -120,11 +134,11 @@ export class MyCollectionComponent implements OnInit {
   }
 
   onToggleFavourite(movie: Movie): void {
-    const isFavourite: boolean = this.favouriteService.isFavourite(movie.id);
+    const isFavourite: boolean = this.movieDataService.isFavourite(movie.id);
 
-    this.favouriteService.toggleFavourite(movie.id).subscribe({
+    this.movieDataService.toggleFavourite(movie.id).subscribe({
       next: (): void => {
-        const isNowFavourite: boolean = this.favouriteService.isFavourite(
+        const isNowFavourite: boolean = this.movieDataService.isFavourite(
           movie.id
         );
         this.messageService.add({
@@ -153,7 +167,7 @@ export class MyCollectionComponent implements OnInit {
   onRateMovie(event: MovieRatingEvent): void {
     const isRemovingRating: boolean = event.rating === 0;
 
-    this.ratingService.setRating(event.movie.id, event.rating).subscribe({
+    this.movieDataService.setRating(event.movie.id, event.rating).subscribe({
       next: (): void => {
         this.messageService.add({
           severity: 'success',
@@ -179,11 +193,11 @@ export class MyCollectionComponent implements OnInit {
   }
 
   isFavourite(movieId: number): boolean {
-    return this.favouriteService.isFavourite(movieId);
+    return this.movieDataService.isFavourite(movieId);
   }
 
   getUserRating(movieId: number): number {
-    return this.ratingService.getRating(movieId);
+    return this.movieDataService.getRating(movieId);
   }
 
   onClearAll(): void {
@@ -191,8 +205,8 @@ export class MyCollectionComponent implements OnInit {
 
     const clearObservable =
       this.activeTab() === 'favourites'
-        ? this.favouriteService.clearAllFavourites()
-        : this.ratingService.clearAllRatings();
+        ? this.movieDataService.clearAllFavourites()
+        : this.movieDataService.clearAllRatings();
 
     const successMessage =
       this.activeTab() === 'favourites'

@@ -1,8 +1,10 @@
-export const APP_TEXT = {
+export const COMMON_TEXT = {
   NO_OVERVIEW: 'No overview available.',
   YES: 'Yes',
   NO: 'No',
+} as const;
 
+export const MOVIE_DETAIL_TEXT = {
   OVERVIEW: 'Overview',
   POPULARITY: 'Popularity',
   ADULT_CONTENT: 'Adult Content',
@@ -10,26 +12,34 @@ export const APP_TEXT = {
   ADD_TO_FAVOURITES: 'Add to Favourites',
   REMOVE_FROM_FAVOURITES: 'Remove from Favourites',
   VOTES: 'votes',
+  CLEAR_RATING: 'Clear rating',
+} as const;
 
+export const PAGE_TITLE_TEXT = {
   TRENDING_MOVIES: 'Trending Movies',
   SEARCH_RESULTS: 'Search Results',
-  MY_FAVOURITE_MOVIES: 'My Favourite Movies',
-  MY_RATINGS: 'My Ratings',
   MY_COLLECTION: 'My Collection',
+} as const;
 
+export const NAV_TEXT = {
   TRENDING: 'Trending',
   FAVOURITES: 'Favourites',
   MY_RATINGS_NAV: 'My Ratings',
   MY_COLLECTION_NAV: 'My Collection',
+} as const;
 
+export const SEARCH_TEXT = {
   SEARCH_PLACEHOLDER: 'Search for movies...',
   SEARCH: 'Search',
   CLEAR: 'Clear',
+} as const;
 
+export const ACTION_TEXT = {
   CLEAR_ALL_FAVOURITES: 'Clear All Favourites',
   CLEAR_ALL_RATINGS: 'Clear All Ratings',
-  CLEAR_RATING: 'Clear rating',
+} as const;
 
+export const EMPTY_STATE_TEXT = {
   NO_MOVIES_FOUND: 'No movies found',
   NO_FAVOURITE_MOVIES: 'No favourite movies yet',
   NO_FAVOURITES_SUBTITLE:
@@ -37,7 +47,9 @@ export const APP_TEXT = {
   NO_RATINGS_YET: 'No Ratings Yet',
   NO_RATINGS_SUBTITLE:
     "Start rating movies to see them here. Your ratings help you track movies you've watched!",
+} as const;
 
+export const ERROR_TEXT = {
   ERROR: 'Error',
   ERROR_LOADING_TRENDING: 'Failed to load trending movies',
   ERROR_SEARCHING_MOVIES: 'Failed to search movies',
@@ -49,7 +61,9 @@ export const APP_TEXT = {
   ERROR_UPDATE_FAVOURITE: 'Failed to update favourite',
   ERROR_CLEAR_RATINGS: 'Failed to clear ratings',
   ERROR_CLEAR_FAVOURITES: 'Failed to clear favourites',
+} as const;
 
+export const SUCCESS_TEXT = {
   SUCCESS: 'Success',
   SUCCESS_RATING_ADDED: 'Rating updated successfully',
   SUCCESS_RATING_REMOVED: 'Rating removed',
