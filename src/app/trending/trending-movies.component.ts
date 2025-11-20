@@ -9,7 +9,12 @@ import { MessageService } from 'primeng/api';
 import { PaginatorModule } from 'primeng/paginator';
 
 import { MovieDataService } from '../shared/services/movie-data.service';
-import { Movie, MovieRatingEvent } from '../shared/models/app.models';
+import {
+  Movie,
+  MovieRatingEvent,
+  PageChangeEvent,
+  CombinedTextType,
+} from '../shared/models/app.models';
 import {
   PAGE_TITLE_TEXT,
   SEARCH_TEXT,
@@ -49,14 +54,14 @@ export class TrendingMoviesComponent implements OnInit {
   isSearchMode: boolean = false;
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
-  readonly TEXT = {
+  readonly TEXT: CombinedTextType = {
     ...PAGE_TITLE_TEXT,
     ...SEARCH_TEXT,
     ...EMPTY_STATE_TEXT,
     ...ERROR_TEXT,
     ...SUCCESS_TEXT,
   };
-  readonly pageSize = PAGINATION_CONFIG.defaultPageSize;
+  readonly pageSize: number = PAGINATION_CONFIG.defaultPageSize;
 
   constructor(
     private movieDataService: MovieDataService,
@@ -126,8 +131,8 @@ export class TrendingMoviesComponent implements OnInit {
     this.searchMovies(1);
   }
 
-  onPageChange(event: { page?: number }): void {
-    const page = event.page !== undefined ? event.page + 1 : 1;
+  onPageChange(event: PageChangeEvent): void {
+    const page: number = event.page !== undefined ? event.page + 1 : 1;
     if (this.isSearchMode) {
       this.searchMovies(page);
     } else {

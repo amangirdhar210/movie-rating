@@ -3,7 +3,7 @@ import { DecimalPipe, UpperCasePipe } from '@angular/common';
 
 import { CardModule } from 'primeng/card';
 
-import { Movie } from '../../models/app.models';
+import { Movie, CommonTextType } from '../../models/app.models';
 import {
   IMAGE_BASE_URL,
   DEFAULT_POSTER_PATH,
@@ -18,14 +18,14 @@ import { COMMON_TEXT } from '../../constants/app.constants';
 })
 export class MovieCardComponent {
   @Input({ required: true }) movie!: Movie;
-  @Input() isFavourite = false;
+  @Input() isFavourite: boolean = false;
   @Input() userRating: number = 0;
-  @Input() showFavouriteBadge = true;
-  @Input() showRatingBadge = true;
-  @Output() movieClick = new EventEmitter<Movie>();
+  @Input() showFavouriteBadge: boolean = true;
+  @Input() showRatingBadge: boolean = true;
+  @Output() movieClick: EventEmitter<Movie> = new EventEmitter<Movie>();
 
-  readonly imgBaseUrl = IMAGE_BASE_URL;
-  readonly TEXT = COMMON_TEXT;
+  readonly imgBaseUrl: string = IMAGE_BASE_URL;
+  readonly TEXT: CommonTextType = COMMON_TEXT;
 
   get poster(): string {
     return this.movie.poster_path

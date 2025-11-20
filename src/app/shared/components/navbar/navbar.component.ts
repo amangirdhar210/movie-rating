@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
+import { NavTextType } from '../../models/app.models';
 import { NAV_TEXT } from '../../constants/app.constants';
 
 @Component({
@@ -10,7 +11,7 @@ import { NAV_TEXT } from '../../constants/app.constants';
   styleUrl: './navbar.component.scss',
 })
 export class NavbarComponent {
-  readonly TEXT = NAV_TEXT;
+  readonly TEXT: NavTextType = NAV_TEXT;
 
   constructor(private router: Router) {}
 

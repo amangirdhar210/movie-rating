@@ -11,8 +11,8 @@ import { CACHE_CONFIG } from '../constants/app.config';
   providedIn: 'root',
 })
 export class CacheService {
-  private readonly CACHE_KEY = CACHE_CONFIG.storageKey;
-  private readonly CLEANUP_INTERVAL_MS = CACHE_CONFIG.cleanupIntervalMs;
+  private readonly CACHE_KEY: string = CACHE_CONFIG.storageKey;
+  private readonly CLEANUP_INTERVAL_MS: number = CACHE_CONFIG.cleanupIntervalMs;
 
   constructor() {
     this.removeExpired();

@@ -1,4 +1,5 @@
 import { Component, OnInit, signal, WritableSignal } from '@angular/core';
+import { Observable } from 'rxjs';
 
 import { ButtonModule } from 'primeng/button';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
@@ -11,6 +12,9 @@ import {
   RatedMovie,
   MovieRatingEvent,
   RatedMoviesResponse,
+  PageChangeEvent,
+  TabType,
+  CollectionTextType,
 } from '../shared/models/app.models';
 import {
   PAGE_TITLE_TEXT,
@@ -23,8 +27,6 @@ import {
 import { PAGINATION_CONFIG } from '../shared/constants/app.config';
 import { MovieCardComponent } from '../shared/components/movie-card/movie-card.component';
 import { MovieDetailModalComponent } from '../shared/components/movie-detail-modal/movie-detail-modal.component';
-
-type TabType = 'favourites' | 'ratings';
 
 @Component({
   selector: 'app-my-collection',
@@ -48,7 +50,7 @@ export class MyCollectionComponent implements OnInit {
   totalResults: number = 0;
   selectedMovie: Movie | null = null;
   showModal: boolean = false;
-  readonly TEXT = {
+  readonly TEXT: CollectionTextType = {
     ...PAGE_TITLE_TEXT,
     ...NAV_TEXT,
     ...ACTION_TEXT,
@@ -56,7 +58,7 @@ export class MyCollectionComponent implements OnInit {
     ...ERROR_TEXT,
     ...SUCCESS_TEXT,
   };
-  readonly pageSize = PAGINATION_CONFIG.defaultPageSize;
+  readonly pageSize: number = PAGINATION_CONFIG.defaultPageSize;
 
   constructor(
     private movieDataService: MovieDataService,
@@ -119,8 +121,8 @@ export class MyCollectionComponent implements OnInit {
     });
   }
 
-  onPageChange(event: { page?: number }): void {
-    const page = event.page !== undefined ? event.page + 1 : 1;
+  onPageChange(event: PageChangeEvent): void {
+    const page: number = event.page !== undefined ? event.page + 1 : 1;
     if (this.activeTab() === 'favourites') {
       this.loadFavourites(page);
     } else {
@@ -203,17 +205,17 @@ export class MyCollectionComponent implements OnInit {
   onClearAll(): void {
     this.isDeletingAll.set(true);
 
-    const clearObservable =
+    const clearObservable: Observable<any[]> =
       this.activeTab() === 'favourites'
         ? this.movieDataService.clearAllFavourites()
         : this.movieDataService.clearAllRatings();
 
-    const successMessage =
+    const successMessage: string =
       this.activeTab() === 'favourites'
         ? this.TEXT.SUCCESS_ALL_FAVOURITES_CLEARED
         : this.TEXT.SUCCESS_ALL_RATINGS_CLEARED;
 
-    const errorMessage =
+    const errorMessage: string =
       this.activeTab() === 'favourites'
         ? this.TEXT.ERROR_CLEAR_FAVOURITES
         : this.TEXT.ERROR_CLEAR_RATINGS;
